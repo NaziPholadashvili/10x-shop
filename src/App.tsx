@@ -1,10 +1,16 @@
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Layout from "./components/Layout";
+import Home from "./pages/Home";
+
 function App() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-slate-950">
-      <h1 className="text-4xl font-bold text-white">
-        10X Shop
-      </h1>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route element={<Layout />}>
+          <Route path="/" element={<Home />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
   );
 }
 
