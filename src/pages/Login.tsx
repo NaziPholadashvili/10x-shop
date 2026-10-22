@@ -1,6 +1,6 @@
 
 import { useState, type FormEvent } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 export default function Login() {
@@ -10,6 +10,12 @@ export default function Login() {
 
     const { login } = useAuth();
     const navigate = useNavigate();
+    const location = useLocation();
+
+    const from =
+        location.state?.from === "/checkout"
+            ? "/checkout"
+            : "/";
 
     function handleSubmit(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
@@ -21,7 +27,7 @@ export default function Login() {
 
         setError("");
         login(username.trim());
-        navigate("/");
+        navigate(from, { replace: true });
     }
 
     return (
@@ -35,28 +41,40 @@ export default function Login() {
                 className="space-y-5 rounded-xl bg-white p-6 shadow-sm"
             >
                 <div>
-                    <label htmlFor="username" className="mb-2 block font-medium">
+                    <label
+                        htmlFor="username"
+                        className="mb-2 block font-medium"
+                    >
                         Username
                     </label>
+
                     <input
                         id="username"
                         type="text"
                         value={username}
-                        onChange={(event) => setUsername(event.target.value)}
+                        onChange={(event) =>
+                            setUsername(event.target.value)
+                        }
                         required
                         className="w-full rounded-lg border border-slate-300 p-3"
                     />
                 </div>
 
                 <div>
-                    <label htmlFor="password" className="mb-2 block font-medium">
+                    <label
+                        htmlFor="password"
+                        className="mb-2 block font-medium"
+                    >
                         Password
                     </label>
+
                     <input
                         id="password"
                         type="password"
                         value={password}
-                        onChange={(event) => setPassword(event.target.value)}
+                        onChange={(event) =>
+                            setPassword(event.target.value)
+                        }
                         required
                         className="w-full rounded-lg border border-slate-300 p-3"
                     />

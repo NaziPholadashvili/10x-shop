@@ -1,3 +1,4 @@
+
 import { Link } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 
@@ -13,12 +14,20 @@ export default function Cart() {
 
     return (
         <main className="mx-auto max-w-5xl px-6 py-10">
-            <h1 className="mb-8 text-3xl font-bold">Shopping Cart</h1>
+            <h1 className="mb-8 text-3xl font-bold">
+                Shopping Cart
+            </h1>
 
             {items.length === 0 ? (
                 <div className="rounded-xl bg-white p-8 text-center shadow-sm">
-                    <p className="mb-4 text-slate-600">Your cart is empty.</p>
-                    <Link to="/products" className="font-semibold text-indigo-600">
+                    <p className="mb-4 text-slate-600">
+                        Your cart is empty.
+                    </p>
+
+                    <Link
+                        to="/products"
+                        className="font-semibold text-indigo-600"
+                    >
                         Browse Products
                     </Link>
                 </div>
@@ -42,6 +51,7 @@ export default function Cart() {
                                 >
                                     {product.title}
                                 </Link>
+
                                 <p className="mt-2 text-indigo-600">
                                     ${product.price.toFixed(2)}
                                 </p>
@@ -50,7 +60,9 @@ export default function Cart() {
                             <div className="flex items-center gap-3">
                                 <button
                                     type="button"
-                                    onClick={() => updateQuantity(product.id, quantity - 1)}
+                                    onClick={() =>
+                                        updateQuantity(product.id, quantity - 1)
+                                    }
                                     disabled={quantity <= 1}
                                     className="rounded border px-3 py-1 disabled:opacity-40"
                                 >
@@ -61,7 +73,9 @@ export default function Cart() {
 
                                 <button
                                     type="button"
-                                    onClick={() => updateQuantity(product.id, quantity + 1)}
+                                    onClick={() =>
+                                        updateQuantity(product.id, quantity + 1)
+                                    }
                                     disabled={quantity >= product.stock}
                                     className="rounded border px-3 py-1 disabled:opacity-40"
                                 >
@@ -81,17 +95,27 @@ export default function Cart() {
 
                     <section className="rounded-xl bg-white p-6 shadow-sm">
                         <p>Total items: {totalItems}</p>
+
                         <p className="mt-2 text-xl font-bold">
                             Total: ${totalPrice.toFixed(2)}
                         </p>
 
-                        <button
-                            type="button"
-                            onClick={clearCart}
-                            className="mt-5 rounded-lg border border-red-500 px-4 py-2 text-red-600"
-                        >
-                            Clear Cart
-                        </button>
+                        <div className="mt-5 flex flex-wrap items-center gap-4">
+                            <button
+                                type="button"
+                                onClick={clearCart}
+                                className="rounded-lg border border-red-500 px-4 py-2 text-red-600 hover:bg-red-50"
+                            >
+                                Clear Cart
+                            </button>
+
+                            <Link
+                                to="/checkout"
+                                className="inline-block rounded-lg bg-indigo-600 px-6 py-3 font-semibold text-white hover:bg-indigo-700"
+                            >
+                                Proceed to Checkout
+                            </Link>
+                        </div>
                     </section>
                 </div>
             )}
