@@ -1,6 +1,8 @@
+
 import {
     createContext,
     useContext,
+    useEffect,
     useState,
     type ReactNode,
 } from "react";
@@ -21,16 +23,72 @@ interface CartContextType {
     totalPrice: number;
 }
 
+const CART_STORAGE_KEY = "10x-shop-cart";
+
 const CartContext = createContext<CartContextType | undefined>(
     undefined
 );
+
+function loadCart(): CartItem[] {
+    try {
+        const savedCart = localStorage.getItem(CART_STORAGE_KEY);
+
+        if (!savedCart) {
+            return [];
+        }
+
+        const parsed: unknown = JSON.parse(savedCart);
+
+        if (!Array.isArray(parsed)) {
+            return [];
+        }
+
+        return parsed.filter((item): item is CartItem => {
+            if (typeof item !== "object" || item === null) {
+                return false;
+            }
+
+            const cartItem = item as Partial<CartItem>;
+            const product = cartItem.product;
+
+            return (
+                typeof product === "object" &&
+                product !== null &&
+                typeof product.id === "number" &&
+                typeof product.title === "string" &&
+                typeof product.price === "number" &&
+                Number.isFinite(product.price) &&
+                typeof product.stock === "number" &&
+                Number.isInteger(product.stock) &&
+                product.stock > 0 &&
+                typeof cartItem.quantity === "number" &&
+                Number.isInteger(cartItem.quantity) &&
+                cartItem.quantity >= 1 &&
+                cartItem.quantity <= product.stock
+            );
+        });
+    } catch {
+        return [];
+    }
+}
 
 export function CartProvider({
     children,
 }: {
     children: ReactNode;
 }) {
-    const [items, setItems] = useState<CartItem[]>([]);
+    const [items, setItems] = useState<CartItem[]>(loadCart);
+
+    useEffect(() => {
+        try {
+            localStorage.setItem(
+                CART_STORAGE_KEY,
+                JSON.stringify(items)
+            );
+        } catch (error) {
+            console.error("Failed to save cart:", error);
+        }
+    }, [items]);
 
     function addToCart(product: Product) {
         setItems((currentItems) => {
@@ -41,7 +99,13 @@ export function CartProvider({
             if (existingItem) {
                 return currentItems.map((item) =>
                     item.product.id === product.id
-                        ? { ...item, quantity: Math.min(item.quantity + 1, product.stock) }
+                        ? {
+                            ...item,
+                            quantity: Math.min(
+                                item.quantity + 1,
+                                product.stock
+                            ),
+                        }
                         : item
                 );
             }
@@ -56,7 +120,9 @@ export function CartProvider({
 
     function removeFromCart(productId: number) {
         setItems((currentItems) =>
-            currentItems.filter((item) => item.product.id !== productId)
+            currentItems.filter(
+                (item) => item.product.id !== productId
+            )
         );
     }
 
@@ -68,7 +134,10 @@ export function CartProvider({
                         ...item,
                         quantity: Math.max(
                             1,
-                            Math.min(Math.trunc(quantity) || 1, item.product.stock)
+                            Math.min(
+                                Math.trunc(quantity) || 1,
+                                item.product.stock
+                            )
                         ),
                     }
                     : item
@@ -86,7 +155,8 @@ export function CartProvider({
     );
 
     const totalPrice = items.reduce(
-        (total, item) => total + item.product.price * item.quantity,
+        (total, item) =>
+            total + item.product.price * item.quantity,
         0
     );
 
@@ -111,7 +181,9 @@ export function useCart() {
     const context = useContext(CartContext);
 
     if (context === undefined) {
-        throw new Error("useCart must be used within CartProvider");
+        throw new Error(
+            "useCart must be used within CartProvider"
+        );
     }
 
     return context;
