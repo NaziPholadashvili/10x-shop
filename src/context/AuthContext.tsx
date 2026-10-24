@@ -22,14 +22,18 @@ export function AuthProvider({
 }: {
     children: ReactNode;
 }) {
-    const [username, setUsername] = useState<string | null>(null);
+    const [username, setUsername] = useState<string | null>(() => {
+        return localStorage.getItem("10x-shop-username");
+    });
 
     function login(name: string) {
         setUsername(name);
+        localStorage.setItem("10x-shop-username", name);
     }
 
     function logout() {
         setUsername(null);
+        localStorage.removeItem("10x-shop-username");
     }
 
     return (
