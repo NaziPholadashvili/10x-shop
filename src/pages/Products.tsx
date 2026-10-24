@@ -4,6 +4,12 @@ import { getProducts } from "../api/products";
 import type { Product } from "../types/product";
 import ProductCard from "../components/ProductCard";
 
+type SortOption =
+    | "default"
+    | "price-asc"
+    | "price-desc"
+    | "rating-desc";
+
 export default function Products() {
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
@@ -11,6 +17,7 @@ export default function Products() {
 
     const [search, setSearch] = useState("");
     const [category, setCategory] = useState("all");
+    const [sort, setSort] = useState<SortOption>("default");
 
     useEffect(() => {
         let active = true;
@@ -55,6 +62,25 @@ export default function Products() {
         return matchesSearch && matchesCategory;
     });
 
+    const sortedProducts = [...filteredProducts];
+
+    switch (sort) {
+        case "price-asc":
+            sortedProducts.sort((a, b) => a.price - b.price);
+            break;
+
+        case "price-desc":
+            sortedProducts.sort((a, b) => b.price - a.price);
+            break;
+
+        case "rating-desc":
+            sortedProducts.sort((a, b) => b.rating - a.rating);
+            break;
+
+        default:
+            break;
+    }
+
     if (loading) {
         return (
             <p className="p-8 text-slate-600">
@@ -77,7 +103,7 @@ export default function Products() {
                 Our Products
             </h1>
 
-            <div className="mb-8 grid gap-4 md:grid-cols-2">
+            <div className="mb-8 grid gap-4 md:grid-cols-3">
                 <div>
                     <label
                         htmlFor="product-search"
@@ -125,9 +151,40 @@ export default function Products() {
                         ))}
                     </select>
                 </div>
+
+                <div>
+                    <label
+                        htmlFor="product-sort"
+                        className="mb-2 block font-medium text-slate-700"
+                    >
+                        Sort Products
+                    </label>
+
+                    <select
+                        id="product-sort"
+                        value={sort}
+                        onChange={(event) =>
+                            setSort(event.target.value as SortOption)
+                        }
+                        className="w-full rounded-lg border border-slate-300 bg-white p-3 outline-none focus:border-indigo-500"
+                    >
+                        <option value="default">
+                            Default
+                        </option>
+                        <option value="price-asc">
+                            Price: Low to High
+                        </option>
+                        <option value="price-desc">
+                            Price: High to Low
+                        </option>
+                        <option value="rating-desc">
+                            Rating: High to Low
+                        </option>
+                    </select>
+                </div>
             </div>
 
-            {filteredProducts.length === 0 ? (
+            {sortedProducts.length === 0 ? (
                 <p className="text-slate-600">
                     {products.length === 0
                         ? "No products available."
@@ -135,7 +192,7 @@ export default function Products() {
                 </p>
             ) : (
                 <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-                    {filteredProducts.map((product) => (
+                    {sortedProducts.map((product) => (
                         <ProductCard
                             key={product.id}
                             product={product}
