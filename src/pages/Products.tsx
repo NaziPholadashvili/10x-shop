@@ -8,7 +8,9 @@ export default function Products() {
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+
     const [search, setSearch] = useState("");
+    const [category, setCategory] = useState("all");
 
     useEffect(() => {
         let active = true;
@@ -38,11 +40,20 @@ export default function Products() {
         };
     }, []);
 
-    const filteredProducts = products.filter((product) =>
-        product.title
+    const categories = Array.from(
+        new Set(products.map((product) => product.category))
+    ).sort();
+
+    const filteredProducts = products.filter((product) => {
+        const matchesSearch = product.title
             .toLowerCase()
-            .includes(search.trim().toLowerCase())
-    );
+            .includes(search.trim().toLowerCase());
+
+        const matchesCategory =
+            category === "all" || product.category === category;
+
+        return matchesSearch && matchesCategory;
+    });
 
     if (loading) {
         return (
@@ -66,24 +77,54 @@ export default function Products() {
                 Our Products
             </h1>
 
-            <div className="mb-8">
-                <label
-                    htmlFor="product-search"
-                    className="mb-2 block font-medium text-slate-700"
-                >
-                    Search Products
-                </label>
+            <div className="mb-8 grid gap-4 md:grid-cols-2">
+                <div>
+                    <label
+                        htmlFor="product-search"
+                        className="mb-2 block font-medium text-slate-700"
+                    >
+                        Search Products
+                    </label>
 
-                <input
-                    id="product-search"
-                    type="search"
-                    value={search}
-                    onChange={(event) =>
-                        setSearch(event.target.value)
-                    }
-                    placeholder="Search by product name..."
-                    className="w-full rounded-lg border border-slate-300 bg-white p-3 outline-none focus:border-indigo-500"
-                />
+                    <input
+                        id="product-search"
+                        type="search"
+                        value={search}
+                        onChange={(event) =>
+                            setSearch(event.target.value)
+                        }
+                        placeholder="Search by product name..."
+                        className="w-full rounded-lg border border-slate-300 bg-white p-3 outline-none focus:border-indigo-500"
+                    />
+                </div>
+
+                <div>
+                    <label
+                        htmlFor="category-filter"
+                        className="mb-2 block font-medium text-slate-700"
+                    >
+                        Filter by Category
+                    </label>
+
+                    <select
+                        id="category-filter"
+                        value={category}
+                        onChange={(event) =>
+                            setCategory(event.target.value)
+                        }
+                        className="w-full rounded-lg border border-slate-300 bg-white p-3 outline-none focus:border-indigo-500"
+                    >
+                        <option value="all">
+                            All Categories
+                        </option>
+
+                        {categories.map((item) => (
+                            <option key={item} value={item}>
+                                {item}
+                            </option>
+                        ))}
+                    </select>
+                </div>
             </div>
 
             {filteredProducts.length === 0 ? (
