@@ -2,9 +2,14 @@
 import { useState, type FormEvent } from "react";
 import { Link } from "react-router-dom";
 import { useCart } from "../context/CartContext";
+import { useAuth } from "../context/AuthContext";
+import { useOrders } from "../context/OrdersContext";
+import type { Order } from "../types/order";
 
 export default function Checkout() {
     const { items, totalItems, totalPrice, clearCart } = useCart();
+    const { username } = useAuth();
+    const { addOrder } = useOrders();
 
     const [fullName, setFullName] = useState("");
     const [email, setEmail] = useState("");
@@ -30,6 +35,38 @@ export default function Checkout() {
             !postalCode.trim()
         ) {
             setError("Please fill in all fields.");
+            return;
+        }
+
+        if (!username) {
+            setError("Please log in to place an order.");
+            return;
+        }
+
+        const newOrder: Order = {
+            id: crypto.randomUUID(),
+            userId: username,
+            items: items.map((item) => ({
+                product: { ...item.product },
+                quantity: item.quantity,
+            })),
+            totalItems,
+            totalPrice,
+            shippingInformation: {
+                fullName: fullName.trim(),
+                email: email.trim(),
+                address: address.trim(),
+                city: city.trim(),
+                postalCode: postalCode.trim(),
+            },
+            createdAt: new Date().toISOString(),
+            status: "placed",
+        };
+
+        const saved = addOrder(newOrder);
+
+        if (!saved) {
+            setError("Failed to save your order. Please try again.");
             return;
         }
 

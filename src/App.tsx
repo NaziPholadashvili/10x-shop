@@ -8,6 +8,7 @@ import {
 
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import { CartProvider } from "./context/CartContext";
+import { OrdersProvider } from "./context/OrdersContext";
 
 import Layout from "./components/Layout";
 import Home from "./pages/Home";
@@ -16,6 +17,7 @@ import ProductDetails from "./pages/ProductDetails";
 import Login from "./pages/Login";
 import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
+import Orders from "./pages/Orders";
 
 function ProtectedCheckout() {
   const { isAuthenticated } = useAuth();
@@ -33,25 +35,47 @@ function ProtectedCheckout() {
   return <Checkout />;
 }
 
+function ProtectedOrders() {
+  const { isAuthenticated } = useAuth();
+
+  if (!isAuthenticated) {
+    return (
+      <Navigate
+        to="/login"
+        replace
+      />
+    );
+  }
+
+  return <Orders />;
+}
+
 function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
         <CartProvider>
-          <Routes>
-            <Route element={<Layout />}>
-              <Route path="/" element={<Home />} />
-              <Route path="/products" element={<Products />} />
-              <Route path="/products/:id" element={<ProductDetails />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/cart" element={<Cart />} />
+          <OrdersProvider>
+            <Routes>
+              <Route element={<Layout />}>
+                <Route path="/" element={<Home />} />
+                <Route path="/products" element={<Products />} />
+                <Route path="/products/:id" element={<ProductDetails />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/cart" element={<Cart />} />
 
-              <Route
-                path="/checkout"
-                element={<ProtectedCheckout />}
-              />
-            </Route>
-          </Routes>
+                <Route
+                  path="/checkout"
+                  element={<ProtectedCheckout />}
+                />
+
+                <Route
+                  path="/orders"
+                  element={<ProtectedOrders />}
+                />
+              </Route>
+            </Routes>
+          </OrdersProvider>
         </CartProvider>
       </AuthProvider>
     </BrowserRouter>

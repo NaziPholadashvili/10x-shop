@@ -61,6 +61,17 @@ export default function Header() {
 
                     {isAuthenticated ? (
                         <>
+                            <NavLink
+                                to="/orders"
+                                className={({ isActive }) =>
+                                    isActive
+                                        ? "font-semibold text-indigo-600"
+                                        : "text-slate-600 hover:text-indigo-600"
+                                }
+                            >
+                                My Orders
+                            </NavLink>
+
                             <span className="font-medium text-slate-700">
                                 Hello, {username}
                             </span>
