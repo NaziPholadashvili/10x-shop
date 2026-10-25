@@ -1,4 +1,3 @@
-
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
@@ -70,6 +69,17 @@ export default function Header() {
                                 }
                             >
                                 My Orders
+                            </NavLink>
+
+                            <NavLink
+                                to="/profile"
+                                className={({ isActive }) =>
+                                    isActive
+                                        ? "font-semibold text-indigo-600"
+                                        : "text-slate-600 hover:text-indigo-600"
+                                }
+                            >
+                                My Profile
                             </NavLink>
 
                             <span className="font-medium text-slate-700">

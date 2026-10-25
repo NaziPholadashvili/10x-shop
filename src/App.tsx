@@ -1,4 +1,3 @@
-
 import {
   BrowserRouter,
   Routes,
@@ -18,6 +17,7 @@ import Login from "./pages/Login";
 import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
 import Orders from "./pages/Orders";
+import Profile from "./pages/Profile";
 
 function ProtectedCheckout() {
   const { isAuthenticated } = useAuth();
@@ -39,15 +39,20 @@ function ProtectedOrders() {
   const { isAuthenticated } = useAuth();
 
   if (!isAuthenticated) {
-    return (
-      <Navigate
-        to="/login"
-        replace
-      />
-    );
+    return <Navigate to="/login" replace />;
   }
 
   return <Orders />;
+}
+
+function ProtectedProfile() {
+  const { isAuthenticated } = useAuth();
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return <Profile />;
 }
 
 function App() {
@@ -72,6 +77,11 @@ function App() {
                 <Route
                   path="/orders"
                   element={<ProtectedOrders />}
+                />
+
+                <Route
+                  path="/profile"
+                  element={<ProtectedProfile />}
                 />
               </Route>
             </Routes>
