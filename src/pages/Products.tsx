@@ -14,6 +14,7 @@ export default function Products() {
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [retryCount, setRetryCount] = useState(0);
 
     const [search, setSearch] = useState("");
     const [category, setCategory] = useState("all");
@@ -23,6 +24,9 @@ export default function Products() {
         let active = true;
 
         async function loadProducts() {
+            setLoading(true);
+            setError(null);
+
             try {
                 const data = await getProducts();
 
@@ -45,7 +49,7 @@ export default function Products() {
         return () => {
             active = false;
         };
-    }, []);
+    }, [retryCount]);
 
     const categories = Array.from(
         new Set(products.map((product) => product.category))
@@ -83,7 +87,7 @@ export default function Products() {
 
     if (loading) {
         return (
-            <p className="p-8 text-slate-600">
+            <p role="status" className="p-8 text-slate-600">
                 Loading products...
             </p>
         );
@@ -91,9 +95,21 @@ export default function Products() {
 
     if (error) {
         return (
-            <p role="alert" className="p-8 text-red-600">
-                {error}
-            </p>
+            <div className="p-8">
+                <p role="alert" className="mb-4 text-red-600">
+                    {error}
+                </p>
+
+                <button
+                    type="button"
+                    onClick={() =>
+                        setRetryCount((count) => count + 1)
+                    }
+                    className="rounded-lg bg-indigo-600 px-4 py-2 font-medium text-white hover:bg-indigo-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                >
+                    Try Again
+                </button>
+            </div>
         );
     }
 
