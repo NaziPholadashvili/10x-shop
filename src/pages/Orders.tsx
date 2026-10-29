@@ -1,7 +1,7 @@
 
 import { Link } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
-import { useOrders } from "../context/OrdersContext";
+import { useAuth } from "../context/useAuth";
+import { useOrders } from "../context/useOrders";
 
 export default function Orders() {
     const { username } = useAuth();

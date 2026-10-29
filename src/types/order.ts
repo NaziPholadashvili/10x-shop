@@ -1,5 +1,5 @@
 
-import type { CartItem } from "../context/CartContext";
+import type { CartItem } from "../context/cart-context";
 
 export interface ShippingInformation {
     fullName: string;
