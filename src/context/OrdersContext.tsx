@@ -1,23 +1,9 @@
 
-import {
-    createContext,
-    useContext,
-    useState,
-    type ReactNode,
-} from "react";
-
+import { useState, type ReactNode } from "react";
 import type { Order } from "../types/order";
-
-interface OrdersContextType {
-    orders: Order[];
-    addOrder: (order: Order) => boolean;
-}
+import { OrdersContext } from "./orders-context";
 
 const ORDERS_STORAGE_KEY = "10x-shop-orders";
-
-const OrdersContext = createContext<OrdersContextType | undefined>(
-    undefined
-);
 
 function loadOrders(): Order[] {
     try {
@@ -84,16 +70,4 @@ export function OrdersProvider({
             {children}
         </OrdersContext.Provider>
     );
-}
-
-export function useOrders() {
-    const context = useContext(OrdersContext);
-
-    if (context === undefined) {
-        throw new Error(
-            "useOrders must be used within OrdersProvider"
-        );
-    }
-
-    return context;
 }

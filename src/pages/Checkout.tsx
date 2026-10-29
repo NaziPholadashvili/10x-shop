@@ -1,9 +1,9 @@
 
 import { useState, type FormEvent } from "react";
 import { Link } from "react-router-dom";
-import { useCart } from "../context/CartContext";
-import { useAuth } from "../context/AuthContext";
-import { useOrders } from "../context/OrdersContext";
+import { useCart } from "../context/useCart";
+import { useAuth } from "../context/useAuth";
+import { useOrders } from "../context/useOrders";
 import type { Order } from "../types/order";
 
 export default function Checkout() {
