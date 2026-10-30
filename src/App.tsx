@@ -20,6 +20,7 @@ import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
 import Orders from "./pages/Orders";
 import Profile from "./pages/Profile";
+import NotFound from "./pages/NotFound";
 
 function ProtectedCheckout() {
   const { isAuthenticated } = useAuth();
@@ -85,6 +86,8 @@ function App() {
                   path="/profile"
                   element={<ProtectedProfile />}
                 />
+
+                <Route path="*" element={<NotFound />} />
               </Route>
             </Routes>
           </OrdersProvider>
