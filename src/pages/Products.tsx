@@ -7,6 +7,7 @@ import type {
     CatalogSortOption,
 } from "../types/product";
 import ProductCard from "../components/ProductCard";
+import ProductCardSkeleton from "../components/ProductCardSkeleton";
 
 const PAGE_SIZE = 12;
 
@@ -23,8 +24,6 @@ interface SearchFieldProps {
     onSearch: (value: string) => void;
 }
 
-// Search input has its own local state.
-// The key in Products synchronizes it with URL changes.
 function SearchField({
     initialValue,
     onSearch,
@@ -264,20 +263,26 @@ export default function Products() {
 
     switch (sort) {
         case "price-asc":
-            sortedProducts.sort((a, b) => a.price - b.price);
+            sortedProducts.sort(
+                (a, b) => a.price - b.price
+            );
             break;
 
         case "price-desc":
-            sortedProducts.sort((a, b) => b.price - a.price);
+            sortedProducts.sort(
+                (a, b) => b.price - a.price
+            );
             break;
 
         case "rating-desc":
-            sortedProducts.sort((a, b) => b.rating - a.rating);
+            sortedProducts.sort(
+                (a, b) => b.rating - a.rating
+            );
             break;
 
         case "title-asc":
-            sortedProducts.sort((a, b) =>
-                a.title.localeCompare(b.title)
+            sortedProducts.sort(
+                (a, b) => a.title.localeCompare(b.title)
             );
             break;
 
@@ -383,12 +388,21 @@ export default function Products() {
             )}
 
             {loading ? (
-                <p role="status" className="text-slate-600">
-                    Loading products...
-                </p>
+                <section
+                    aria-label="Loading products"
+                    aria-busy="true"
+                    className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4"
+                >
+                    {Array.from({ length: 8 }, (_, index) => (
+                        <ProductCardSkeleton key={index} />
+                    ))}
+                </section>
             ) : error ? (
                 <div>
-                    <p role="alert" className="mb-4 text-red-600">
+                    <p
+                        role="alert"
+                        className="mb-4 text-red-600"
+                    >
                         {error}
                     </p>
 
