@@ -1,11 +1,42 @@
 
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/useAuth";
 import { useOrders } from "../context/useOrders";
+import type { OrderStatus } from "../types/order";
+
+function getOrderStatus(
+    createdAt: string,
+    currentTime: number
+): OrderStatus {
+    const elapsedTime = currentTime - new Date(createdAt).getTime();
+
+    if (elapsedTime < 60_000) {
+        return "Processing";
+    }
+
+    if (elapsedTime < 180_000) {
+        return "Shipped";
+    }
+
+    return "Delivered";
+}
 
 export default function Orders() {
     const { username } = useAuth();
     const { orders } = useOrders();
+
+    const [currentTime, setCurrentTime] = useState(() => Date.now());
+
+    useEffect(() => {
+        const intervalId = window.setInterval(() => {
+            setCurrentTime(Date.now());
+        }, 30_000);
+
+        return () => {
+            window.clearInterval(intervalId);
+        };
+    }, []);
 
     const userOrders = orders
         .filter((order) => order.userId === username)
@@ -36,62 +67,78 @@ export default function Orders() {
                 </div>
             ) : (
                 <div className="space-y-6">
-                    {userOrders.map((order) => (
-                        <section
-                            key={order.id}
-                            className="rounded-xl bg-white p-6 shadow-sm"
-                        >
-                            <div className="mb-4 flex flex-wrap items-center justify-between gap-4">
-                                <div>
-                                    <h2 className="font-semibold text-slate-900">
-                                        Order #{order.id.slice(0, 8)}
-                                    </h2>
+                    {userOrders.map((order) => {
+                        const status = getOrderStatus(
+                            order.createdAt,
+                            currentTime
+                        );
 
-                                    <p className="text-sm text-slate-500">
-                                        {new Date(
-                                            order.createdAt
-                                        ).toLocaleString()}
-                                    </p>
+                        const statusClasses =
+                            status === "Delivered"
+                                ? "bg-green-100 text-green-700"
+                                : status === "Shipped"
+                                    ? "bg-blue-100 text-blue-700"
+                                    : "bg-yellow-100 text-yellow-800";
+
+                        return (
+                            <section
+                                key={order.id}
+                                className="rounded-xl bg-white p-6 shadow-sm"
+                            >
+                                <div className="mb-4 flex flex-wrap items-center justify-between gap-4">
+                                    <div>
+                                        <h2 className="font-semibold text-slate-900">
+                                            Order #{order.number ?? order.id.slice(0, 8)}
+                                        </h2>
+
+                                        <p className="text-sm text-slate-500">
+                                            {new Date(
+                                                order.createdAt
+                                            ).toLocaleString()}
+                                        </p>
+                                    </div>
+
+                                    <span
+                                        className={`rounded-full px-3 py-1 text-sm font-medium ${statusClasses}`}
+                                    >
+                                        {status}
+                                    </span>
                                 </div>
 
-                                <span className="rounded-full bg-green-100 px-3 py-1 text-sm font-medium text-green-700">
-                                    {order.status}
-                                </span>
-                            </div>
+                                <ul className="space-y-3 border-t py-4">
+                                    {order.items.map((item) => (
+                                        <li
+                                            key={item.product.id}
+                                            className="flex justify-between gap-4"
+                                        >
+                                            <span>
+                                                {item.product.title} ×{" "}
+                                                {item.quantity}
+                                            </span>
 
-                            <ul className="space-y-3 border-t py-4">
-                                {order.items.map((item) => (
-                                    <li
-                                        key={item.product.id}
-                                        className="flex justify-between gap-4"
-                                    >
-                                        <span>
-                                            {item.product.title} ×{" "}
-                                            {item.quantity}
-                                        </span>
+                                            <span className="font-medium">
+                                                $
+                                                {(
+                                                    item.product.price *
+                                                    item.quantity
+                                                ).toFixed(2)}
+                                            </span>
+                                        </li>
+                                    ))}
+                                </ul>
 
-                                        <span className="font-medium">
-                                            $
-                                            {(
-                                                item.product.price *
-                                                item.quantity
-                                            ).toFixed(2)}
-                                        </span>
-                                    </li>
-                                ))}
-                            </ul>
+                                <div className="border-t pt-4">
+                                    <p className="text-sm text-slate-600">
+                                        Total items: {order.totalItems}
+                                    </p>
 
-                            <div className="border-t pt-4">
-                                <p className="text-sm text-slate-600">
-                                    Total items: {order.totalItems}
-                                </p>
-
-                                <p className="mt-2 text-xl font-bold text-slate-900">
-                                    Total: ${order.totalPrice.toFixed(2)}
-                                </p>
-                            </div>
-                        </section>
-                    ))}
+                                    <p className="mt-2 text-xl font-bold text-slate-900">
+                                        Total: ${order.totalPrice.toFixed(2)}
+                                    </p>
+                                </div>
+                            </section>
+                        );
+                    })}
                 </div>
             )}
         </main>

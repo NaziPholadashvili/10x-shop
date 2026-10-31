@@ -1,4 +1,3 @@
-
 import type { CartItem } from "../context/cart-context";
 
 export interface ShippingInformation {
@@ -9,13 +8,19 @@ export interface ShippingInformation {
     postalCode: string;
 }
 
+export type OrderStatus =
+    | "Processing"
+    | "Shipped"
+    | "Delivered";
+
 export interface Order {
     id: string;
+    number?: string;
     userId: string;
     items: CartItem[];
     totalItems: number;
     totalPrice: number;
     shippingInformation: ShippingInformation;
     createdAt: string;
-    status: "placed";
+    status?: "placed";
 }
