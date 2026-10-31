@@ -70,7 +70,16 @@ export function CartProvider({
         }
     }, [items]);
 
-    function addToCart(product: Product) {
+    function addToCart(product: Product, quantity = 1) {
+        if (
+            !Number.isInteger(quantity) ||
+            quantity < 1 ||
+            !Number.isInteger(product.stock) ||
+            product.stock < 1
+        ) {
+            return;
+        }
+
         setItems((currentItems) => {
             const existingItem = currentItems.find(
                 (item) => item.product.id === product.id
@@ -82,7 +91,7 @@ export function CartProvider({
                         ? {
                             ...item,
                             quantity: Math.min(
-                                item.quantity + 1,
+                                item.quantity + quantity,
                                 product.stock
                             ),
                         }
@@ -90,11 +99,13 @@ export function CartProvider({
                 );
             }
 
-            if (product.stock < 1) {
-                return currentItems;
-            }
-
-            return [...currentItems, { product, quantity: 1 }];
+            return [
+                ...currentItems,
+                {
+                    product,
+                    quantity: Math.min(quantity, product.stock),
+                },
+            ];
         });
     }
 

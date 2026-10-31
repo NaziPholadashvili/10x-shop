@@ -1,5 +1,5 @@
 
-import { useState, type FormEvent } from "react";
+import { useRef, useState, type FormEvent } from "react";
 import { Link } from "react-router-dom";
 import { useCart } from "../context/useCart";
 import { useAuth } from "../context/useAuth";
@@ -17,10 +17,19 @@ export default function Checkout() {
     const [city, setCity] = useState("");
     const [postalCode, setPostalCode] = useState("");
     const [error, setError] = useState("");
-    const [orderPlaced, setOrderPlaced] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [placedOrder, setPlacedOrder] = useState<Order | null>(null);
+
+    const submittingRef = useRef(false);
 
     function handleSubmit(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
+
+        if (submittingRef.current) {
+            return;
+        }
+
+        setError("");
 
         if (items.length === 0) {
             setError("Your cart is empty.");
@@ -43,55 +52,81 @@ export default function Checkout() {
             return;
         }
 
-        const newOrder: Order = {
-            id: crypto.randomUUID(),
-            userId: username,
-            items: items.map((item) => ({
-                product: { ...item.product },
-                quantity: item.quantity,
-            })),
-            totalItems,
-            totalPrice,
-            shippingInformation: {
-                fullName: fullName.trim(),
-                email: email.trim(),
-                address: address.trim(),
-                city: city.trim(),
-                postalCode: postalCode.trim(),
-            },
-            createdAt: new Date().toISOString(),
-            status: "placed",
-        };
+        submittingRef.current = true;
+        setIsSubmitting(true);
 
-        const saved = addOrder(newOrder);
+        try {
+            const newOrder: Order = {
+                id: crypto.randomUUID(),
+                userId: username,
+                items: items.map((item) => ({
+                    product: { ...item.product },
+                    quantity: item.quantity,
+                })),
+                totalItems,
+                totalPrice,
+                shippingInformation: {
+                    fullName: fullName.trim(),
+                    email: email.trim(),
+                    address: address.trim(),
+                    city: city.trim(),
+                    postalCode: postalCode.trim(),
+                },
+                createdAt: new Date().toISOString(),
+                status: "placed",
+            };
 
-        if (!saved) {
-            setError("Failed to save your order. Please try again.");
-            return;
+            const saved = addOrder(newOrder);
+
+            if (!saved) {
+                setError(
+                    "Failed to save your order. Please try again."
+                );
+                return;
+            }
+
+            clearCart();
+            setPlacedOrder(newOrder);
+        } catch {
+            setError(
+                "Something went wrong. Please try again."
+            );
+        } finally {
+            submittingRef.current = false;
+            setIsSubmitting(false);
         }
-
-        setError("");
-        clearCart();
-        setOrderPlaced(true);
     }
 
-    if (orderPlaced) {
+    if (placedOrder) {
         return (
             <main className="mx-auto max-w-2xl px-6 py-12 text-center">
                 <h1 className="mb-4 text-3xl font-bold text-green-700">
-                    Order placed successfully!
+                    Thank you! Your order has been placed.
                 </h1>
 
-                <p className="mb-6 text-slate-600">
-                    Thank you for shopping with 10X Shop.
+                <p className="mb-4 text-slate-600">
+                    Your order was placed successfully.
                 </p>
 
-                <Link
-                    to="/products"
-                    className="inline-block rounded-lg bg-indigo-600 px-6 py-3 font-semibold text-white hover:bg-indigo-700"
-                >
-                    Continue Shopping
-                </Link>
+                <p className="mb-6 text-2xl font-bold text-slate-900">
+                    Order Total: ${placedOrder.totalPrice.toFixed(2)}
+                </p>
+
+                <div className="flex flex-wrap justify-center gap-4">
+                    <Link
+                        to="/"
+                        className="inline-block rounded-lg bg-indigo-600 px-6 py-3 font-semibold text-white hover:bg-indigo-700"
+                    >
+                        Continue Shopping
+                    </Link>
+
+                    <Link
+                        to="/orders"
+                        className="inline-block rounded-lg border border-indigo-600 px-6 py-3 font-semibold text-indigo-600 hover:bg-indigo-50"
+                    >
+                        View My Orders
+                    </Link>
+                </div>
             </main>
         );
     }
@@ -104,7 +139,7 @@ export default function Checkout() {
                 </h1>
 
                 <Link
-                    to="/products"
+                    to="/"
                     className="text-indigo-600 hover:underline"
                 >
                     Browse Products
@@ -159,70 +194,95 @@ export default function Checkout() {
                 </h2>
 
                 <div>
-                    <label htmlFor="fullName" className="mb-2 block font-medium">
+                    <label
+                        htmlFor="fullName"
+                        className="mb-2 block font-medium"
+                    >
                         Full Name
                     </label>
                     <input
                         id="fullName"
                         type="text"
                         value={fullName}
-                        onChange={(event) => setFullName(event.target.value)}
+                        onChange={(event) =>
+                            setFullName(event.target.value)
+                        }
                         required
                         className="w-full rounded-lg border border-slate-300 p-3"
                     />
                 </div>
 
                 <div>
-                    <label htmlFor="email" className="mb-2 block font-medium">
+                    <label
+                        htmlFor="email"
+                        className="mb-2 block font-medium"
+                    >
                         Email
                     </label>
                     <input
                         id="email"
                         type="email"
                         value={email}
-                        onChange={(event) => setEmail(event.target.value)}
+                        onChange={(event) =>
+                            setEmail(event.target.value)
+                        }
                         required
                         className="w-full rounded-lg border border-slate-300 p-3"
                     />
                 </div>
 
                 <div>
-                    <label htmlFor="address" className="mb-2 block font-medium">
+                    <label
+                        htmlFor="address"
+                        className="mb-2 block font-medium"
+                    >
                         Address
                     </label>
                     <input
                         id="address"
                         type="text"
                         value={address}
-                        onChange={(event) => setAddress(event.target.value)}
+                        onChange={(event) =>
+                            setAddress(event.target.value)
+                        }
                         required
                         className="w-full rounded-lg border border-slate-300 p-3"
                     />
                 </div>
 
                 <div>
-                    <label htmlFor="city" className="mb-2 block font-medium">
+                    <label
+                        htmlFor="city"
+                        className="mb-2 block font-medium"
+                    >
                         City
                     </label>
                     <input
                         id="city"
                         type="text"
                         value={city}
-                        onChange={(event) => setCity(event.target.value)}
+                        onChange={(event) =>
+                            setCity(event.target.value)
+                        }
                         required
                         className="w-full rounded-lg border border-slate-300 p-3"
                     />
                 </div>
 
                 <div>
-                    <label htmlFor="postalCode" className="mb-2 block font-medium">
+                    <label
+                        htmlFor="postalCode"
+                        className="mb-2 block font-medium"
+                    >
                         Postal Code
                     </label>
                     <input
                         id="postalCode"
                         type="text"
                         value={postalCode}
-                        onChange={(event) => setPostalCode(event.target.value)}
+                        onChange={(event) =>
+                            setPostalCode(event.target.value)
+                        }
                         required
                         className="w-full rounded-lg border border-slate-300 p-3"
                     />
@@ -236,9 +296,10 @@ export default function Checkout() {
 
                 <button
                     type="submit"
-                    className="w-full rounded-lg bg-indigo-600 px-4 py-3 font-semibold text-white hover:bg-indigo-700"
+                    disabled={isSubmitting}
+                    className="w-full rounded-lg bg-indigo-600 px-4 py-3 font-semibold text-white hover:bg-indigo-700 disabled:cursor-not-allowed disabled:bg-slate-400"
                 >
-                    Place Order
+                    {isSubmitting ? "Placing Order..." : "Place Order"}
                 </button>
             </form>
         </main>
