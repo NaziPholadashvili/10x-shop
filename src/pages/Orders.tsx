@@ -3,24 +3,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/useAuth";
 import { useOrders } from "../context/useOrders";
-import type { OrderStatus } from "../types/order";
-
-function getOrderStatus(
-    createdAt: string,
-    currentTime: number
-): OrderStatus {
-    const elapsedTime = currentTime - new Date(createdAt).getTime();
-
-    if (elapsedTime < 60_000) {
-        return "Processing";
-    }
-
-    if (elapsedTime < 180_000) {
-        return "Shipped";
-    }
-
-    return "Delivered";
-}
+import { getOrderStatus } from "../utils/orderStatus";
 
 export default function Orders() {
     const { username } = useAuth();
@@ -135,6 +118,13 @@ export default function Orders() {
                                     <p className="mt-2 text-xl font-bold text-slate-900">
                                         Total: ${order.totalPrice.toFixed(2)}
                                     </p>
+
+                                    <Link
+                                        to={`/orders/${order.id}`}
+                                        className="mt-4 inline-block rounded-lg bg-indigo-600 px-5 py-2 font-semibold text-white hover:bg-indigo-700"
+                                    >
+                                        View Details
+                                    </Link>
                                 </div>
                             </section>
                         );
