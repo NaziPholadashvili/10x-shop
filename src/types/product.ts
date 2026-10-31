@@ -19,3 +19,18 @@ export interface ProductsResponse {
     skip: number;
     limit: number;
 }
+
+export type CatalogSortOption =
+    | "default"
+    | "price-asc"
+    | "price-desc"
+    | "rating-desc"
+    | "title-asc";
+
+export interface CatalogParams {
+    page: number;
+    limit: number;
+    search: string;
+    category: string;
+    sort: CatalogSortOption;
+}
