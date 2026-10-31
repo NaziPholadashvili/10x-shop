@@ -1,9 +1,11 @@
 
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/useAuth";
+import { useCart } from "../context/useCart";
 
 export default function Header() {
     const { username, isAuthenticated, logout } = useAuth();
+    const { totalItems } = useCart();
     const navigate = useNavigate();
 
     function handleLogout() {
@@ -45,7 +47,15 @@ export default function Header() {
                                 : "text-slate-600 hover:text-indigo-600"
                         }
                     >
-                        Cart
+                        <span className="inline-flex items-center gap-2">
+                            Cart
+                            <span
+                                aria-label={`${totalItems} items in cart`}
+                                className="inline-flex min-w-6 items-center justify-center rounded-full bg-indigo-600 px-1.5 py-0.5 text-xs font-semibold text-white"
+                            >
+                                {totalItems}
+                            </span>
+                        </span>
                     </NavLink>
 
                     {isAuthenticated ? (
