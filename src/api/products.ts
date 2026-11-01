@@ -117,3 +117,26 @@ export async function getProductById(
 
     return (await response.json()) as Product;
 }
+
+export async function getRelatedProducts(
+    category: string,
+    currentProductId: number,
+    signal?: AbortSignal
+): Promise<Product[]> {
+    const response = await fetch(
+        `${API_URL}/category/${encodeURIComponent(category)}?limit=5`,
+        { signal }
+    );
+
+    if (!response.ok) {
+        throw new Error(
+            `Failed to fetch related products (HTTP ${response.status})`
+        );
+    }
+
+    const data = (await response.json()) as ProductsResponse;
+
+    return data.products
+        .filter((product) => product.id !== currentProductId)
+        .slice(0, 4);
+}

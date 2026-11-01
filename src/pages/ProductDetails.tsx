@@ -5,6 +5,7 @@ import { Link, useParams } from "react-router-dom";
 import { getProductById } from "../api/products";
 import { useCart } from "../context/useCart";
 import { useAuth } from "../context/useAuth";
+import RelatedProducts from "../components/RelatedProducts";
 import type { Product, ProductReview } from "../types/product";
 
 const REVIEWS_STORAGE_KEY = "shop_reviews";
@@ -113,7 +114,7 @@ export default function ProductDetails() {
                 if (active) {
                     setProduct(data);
 
-                    // Reset gallery when the product changes
+                    // Reset gallery when product changes
                     setSelectedImageIndex(0);
 
                     setQuantity(1);
@@ -420,8 +421,7 @@ export default function ProductDetails() {
                                         onClick={() =>
                                             setSelectedImageIndex(index)
                                         }
-                                        aria-label={`View product image ${index + 1
-                                            }`}
+                                        aria-label={`View product image ${index + 1}`}
                                         aria-pressed={isSelected}
                                         className={`h-20 w-20 overflow-hidden rounded-lg border-2 bg-white p-1 transition ${isSelected
                                                 ? "border-indigo-600 ring-2 ring-indigo-200"
@@ -430,8 +430,7 @@ export default function ProductDetails() {
                                     >
                                         <img
                                             src={image}
-                                            alt={`${product.title} thumbnail ${index + 1
-                                                }`}
+                                            alt={`${product.title} thumbnail ${index + 1}`}
                                             className="h-full w-full object-contain"
                                         />
                                     </button>
@@ -477,9 +476,7 @@ export default function ProductDetails() {
                                 type="button"
                                 aria-label="Decrease quantity"
                                 onClick={() =>
-                                    changeQuantity(
-                                        selectedQuantity - 1
-                                    )
+                                    changeQuantity(selectedQuantity - 1)
                                 }
                                 disabled={
                                     remainingStock === 0 ||
@@ -496,9 +493,7 @@ export default function ProductDetails() {
                                 inputMode="numeric"
                                 value={quantityInput}
                                 onChange={(event) =>
-                                    handleQuantityInput(
-                                        event.target.value
-                                    )
+                                    handleQuantityInput(event.target.value)
                                 }
                                 onBlur={handleQuantityBlur}
                                 disabled={remainingStock === 0}
@@ -513,9 +508,7 @@ export default function ProductDetails() {
                                 type="button"
                                 aria-label="Increase quantity"
                                 onClick={() =>
-                                    changeQuantity(
-                                        selectedQuantity + 1
-                                    )
+                                    changeQuantity(selectedQuantity + 1)
                                 }
                                 disabled={
                                     remainingStock === 0 ||
@@ -627,61 +620,49 @@ export default function ProductDetails() {
                                     </p>
                                 ) : (
                                     <div className="mt-5 space-y-4">
-                                        {allReviews.map(
-                                            (review, index) => {
-                                                const stars = Math.max(
-                                                    0,
-                                                    Math.min(
-                                                        5,
-                                                        Math.floor(
-                                                            review.rating
-                                                        )
-                                                    )
-                                                );
+                                        {allReviews.map((review, index) => {
+                                            const stars = Math.max(
+                                                0,
+                                                Math.min(
+                                                    5,
+                                                    Math.floor(review.rating)
+                                                )
+                                            );
 
-                                                return (
-                                                    <article
-                                                        key={`${review.reviewerName}-${review.date}-${index}`}
-                                                        className="rounded-xl border border-slate-200 bg-white p-5"
-                                                    >
-                                                        <div className="flex flex-wrap items-center justify-between gap-2">
-                                                            <h3 className="font-semibold text-slate-900">
-                                                                {
-                                                                    review.reviewerName
-                                                                }
-                                                            </h3>
+                                            return (
+                                                <article
+                                                    key={`${review.reviewerName}-${review.date}-${index}`}
+                                                    className="rounded-xl border border-slate-200 bg-white p-5"
+                                                >
+                                                    <div className="flex flex-wrap items-center justify-between gap-2">
+                                                        <h3 className="font-semibold text-slate-900">
+                                                            {review.reviewerName}
+                                                        </h3>
 
-                                                            <time
-                                                                dateTime={
-                                                                    review.date
-                                                                }
-                                                                className="text-sm text-slate-500"
-                                                            >
-                                                                {new Date(
-                                                                    review.date
-                                                                ).toLocaleDateString()}
-                                                            </time>
-                                                        </div>
-
-                                                        <p
-                                                            aria-label={`${review.rating} out of 5 stars`}
-                                                            className="mt-2 text-amber-500"
+                                                        <time
+                                                            dateTime={review.date}
+                                                            className="text-sm text-slate-500"
                                                         >
-                                                            {"★".repeat(
-                                                                stars
-                                                            )}
-                                                            {"☆".repeat(
-                                                                5 - stars
-                                                            )}
-                                                        </p>
+                                                            {new Date(
+                                                                review.date
+                                                            ).toLocaleDateString()}
+                                                        </time>
+                                                    </div>
 
-                                                        <p className="mt-3 text-slate-700">
-                                                            {review.comment}
-                                                        </p>
-                                                    </article>
-                                                );
-                                            }
-                                        )}
+                                                    <p
+                                                        aria-label={`${review.rating} out of 5 stars`}
+                                                        className="mt-2 text-amber-500"
+                                                    >
+                                                        {"★".repeat(stars)}
+                                                        {"☆".repeat(5 - stars)}
+                                                    </p>
+
+                                                    <p className="mt-3 text-slate-700">
+                                                        {review.comment}
+                                                    </p>
+                                                </article>
+                                            );
+                                        })}
                                     </div>
                                 )}
                             </section>
@@ -709,17 +690,13 @@ export default function ProductDetails() {
                                             value={reviewRating}
                                             onChange={(event) => {
                                                 setReviewRating(
-                                                    Number(
-                                                        event.target.value
-                                                    )
+                                                    Number(event.target.value)
                                                 );
                                                 setReviewSuccess(false);
-                                                setReviewErrors(
-                                                    (previous) => ({
-                                                        ...previous,
-                                                        rating: undefined,
-                                                    })
-                                                );
+                                                setReviewErrors((previous) => ({
+                                                    ...previous,
+                                                    rating: undefined,
+                                                }));
                                             }}
                                             aria-invalid={Boolean(
                                                 reviewErrors.rating
@@ -778,12 +755,10 @@ export default function ProductDetails() {
                                                     event.target.value
                                                 );
                                                 setReviewSuccess(false);
-                                                setReviewErrors(
-                                                    (previous) => ({
-                                                        ...previous,
-                                                        comment: undefined,
-                                                    })
-                                                );
+                                                setReviewErrors((previous) => ({
+                                                    ...previous,
+                                                    comment: undefined,
+                                                }));
                                             }}
                                             rows={4}
                                             placeholder="Share your experience with this product..."
@@ -821,6 +796,13 @@ export default function ProductDetails() {
                     )}
                 </div>
             </section>
+
+            {/* Related Products */}
+            <RelatedProducts
+                key={product.id}
+                category={product.category}
+                currentProductId={product.id}
+            />
         </main>
     );
 }
