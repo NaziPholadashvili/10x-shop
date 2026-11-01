@@ -1,17 +1,11 @@
 
-import {
-    useEffect,
-    useMemo,
-    useState,
-} from "react";
+import { useEffect, useMemo, useState } from "react";
+import type { FormEvent } from "react";
 import { Link, useParams } from "react-router-dom";
 import { getProductById } from "../api/products";
 import { useCart } from "../context/useCart";
 import { useAuth } from "../context/useAuth";
-import type {
-    Product,
-    ProductReview,
-} from "../types/product";
+import type { Product, ProductReview } from "../types/product";
 
 const REVIEWS_STORAGE_KEY = "shop_reviews";
 
@@ -76,6 +70,9 @@ export default function ProductDetails() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
+    // Product Gallery
+    const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+
     const [quantity, setQuantity] = useState(1);
     const [quantityInput, setQuantityInput] = useState("1");
 
@@ -88,6 +85,7 @@ export default function ProductDetails() {
 
     const [reviewRating, setReviewRating] = useState(0);
     const [reviewComment, setReviewComment] = useState("");
+
     const [reviewErrors, setReviewErrors] = useState<{
         rating?: string;
         comment?: string;
@@ -114,6 +112,10 @@ export default function ProductDetails() {
 
                 if (active) {
                     setProduct(data);
+
+                    // Reset gallery when the product changes
+                    setSelectedImageIndex(0);
+
                     setQuantity(1);
                     setQuantityInput("1");
                     setActiveTab("description");
@@ -140,18 +142,42 @@ export default function ProductDetails() {
         };
     }, [id]);
 
-    const localReviews = product
-        ? storedReviews[String(product.id)] ?? []
-        : [];
+    // Gallery images with thumbnail fallback
+    const galleryImages = useMemo(() => {
+        if (!product) {
+            return [];
+        }
 
-    const apiReviews = product?.reviews ?? [];
+        const validImages = Array.isArray(product.images)
+            ? product.images.filter(
+                (image) =>
+                    typeof image === "string" &&
+                    image.trim().length > 0
+            )
+            : [];
 
-    const allReviews = useMemo(
-        () => [...localReviews, ...apiReviews],
-        // The review arrays come from product and storedReviews state.
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        [product, storedReviews]
-    );
+        if (validImages.length > 0) {
+            return validImages;
+        }
+
+        return product.thumbnail ? [product.thumbnail] : [];
+    }, [product]);
+
+    const selectedImage =
+        galleryImages[selectedImageIndex] ?? galleryImages[0];
+
+    const allReviews = useMemo(() => {
+        if (!product) {
+            return [];
+        }
+
+        const localReviews =
+            storedReviews[String(product.id)] ?? [];
+
+        const apiReviews = product.reviews ?? [];
+
+        return [...localReviews, ...apiReviews];
+    }, [product, storedReviews]);
 
     const averageRating = useMemo(() => {
         if (allReviews.length === 0) {
@@ -276,7 +302,7 @@ export default function ProductDetails() {
     }
 
     function handleReviewSubmit(
-        event: React.FormEvent<HTMLFormElement>
+        event: FormEvent<HTMLFormElement>
     ) {
         event.preventDefault();
 
@@ -362,12 +388,60 @@ export default function ProductDetails() {
             </Link>
 
             <div className="mt-8 grid gap-10 md:grid-cols-2">
-                <img
-                    src={product.thumbnail}
-                    alt={product.title}
-                    className="w-full rounded-xl bg-white object-contain"
-                />
+                {/* Product Image Gallery */}
+                <section aria-label="Product image gallery">
+                    <div className="flex aspect-square items-center justify-center overflow-hidden rounded-xl border border-slate-200 bg-white p-4">
+                        {selectedImage ? (
+                            <img
+                                src={selectedImage}
+                                alt={product.title}
+                                className="h-full w-full object-contain"
+                            />
+                        ) : (
+                            <p className="text-slate-500">
+                                No image available
+                            </p>
+                        )}
+                    </div>
 
+                    {galleryImages.length > 1 && (
+                        <div
+                            className="mt-4 flex flex-wrap gap-3"
+                            aria-label="Choose product image"
+                        >
+                            {galleryImages.map((image, index) => {
+                                const isSelected =
+                                    selectedImageIndex === index;
+
+                                return (
+                                    <button
+                                        key={`${image}-${index}`}
+                                        type="button"
+                                        onClick={() =>
+                                            setSelectedImageIndex(index)
+                                        }
+                                        aria-label={`View product image ${index + 1
+                                            }`}
+                                        aria-pressed={isSelected}
+                                        className={`h-20 w-20 overflow-hidden rounded-lg border-2 bg-white p-1 transition ${isSelected
+                                                ? "border-indigo-600 ring-2 ring-indigo-200"
+                                                : "border-slate-200 hover:border-indigo-400"
+                                            }`}
+                                    >
+                                        <img
+                                            src={image}
+                                            alt={`${product.title} thumbnail ${index + 1
+                                                }`}
+                                            className="h-full w-full object-contain"
+                                        />
+                                    </button>
+                                );
+                            })}
+                        </div>
+                    )}
+                </section>
+
+                {/* Product Information */}
                 <section>
                     <h1 className="text-3xl font-bold text-slate-900">
                         {product.title}
@@ -474,6 +548,7 @@ export default function ProductDetails() {
                 </section>
             </div>
 
+            {/* Description and Reviews */}
             <section className="mt-12">
                 <div
                     role="tablist"
@@ -646,11 +721,9 @@ export default function ProductDetails() {
                                                     })
                                                 );
                                             }}
-                                            aria-invalid={
-                                                Boolean(
-                                                    reviewErrors.rating
-                                                )
-                                            }
+                                            aria-invalid={Boolean(
+                                                reviewErrors.rating
+                                            )}
                                             aria-describedby={
                                                 reviewErrors.rating
                                                     ? "review-rating-error"
@@ -714,11 +787,9 @@ export default function ProductDetails() {
                                             }}
                                             rows={4}
                                             placeholder="Share your experience with this product..."
-                                            aria-invalid={
-                                                Boolean(
-                                                    reviewErrors.comment
-                                                )
-                                            }
+                                            aria-invalid={Boolean(
+                                                reviewErrors.comment
+                                            )}
                                             aria-describedby={
                                                 reviewErrors.comment
                                                     ? "review-comment-error"
