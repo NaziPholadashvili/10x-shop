@@ -1,8 +1,8 @@
 
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import { getRelatedProducts } from "../api/products";
 import type { Product } from "../types/product";
+import ProductCard from "./ProductCard";
 
 type RelatedProductsProps = {
     category: string;
@@ -80,30 +80,10 @@ export default function RelatedProducts({
             ) : (
                 <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
                     {products.map((relatedProduct) => (
-                        <Link
+                        <ProductCard
                             key={relatedProduct.id}
-                            to={`/products/${relatedProduct.id}`}
-                            className="overflow-hidden rounded-xl border border-slate-200 bg-white transition hover:border-indigo-400 hover:shadow-md"
-                        >
-                            <div className="flex aspect-square items-center justify-center bg-slate-50 p-4">
-                                <img
-                                    src={relatedProduct.thumbnail}
-                                    alt={relatedProduct.title}
-                                    loading="lazy"
-                                    className="h-full w-full object-contain"
-                                />
-                            </div>
-
-                            <div className="p-4">
-                                <h3 className="font-semibold text-slate-900">
-                                    {relatedProduct.title}
-                                </h3>
-
-                                <p className="mt-2 font-bold text-indigo-600">
-                                    ${relatedProduct.price.toFixed(2)}
-                                </p>
-                            </div>
-                        </Link>
+                            product={relatedProduct}
+                        />
                     ))}
                 </div>
             )}
