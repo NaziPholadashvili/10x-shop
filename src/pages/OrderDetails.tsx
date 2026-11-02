@@ -78,6 +78,19 @@ export default function OrderDetails() {
     const status = getOrderStatus(order.createdAt, currentTime);
     const currentStepIndex = statusSteps.indexOf(status);
 
+    // Older orders may not have a saved price breakdown.
+    const hasPriceBreakdown =
+        typeof order.subtotal === "number" &&
+        Number.isFinite(order.subtotal) &&
+        typeof order.shippingCost === "number" &&
+        Number.isFinite(order.shippingCost);
+
+    const savedDiscount =
+        typeof order.discount === "number" &&
+            Number.isFinite(order.discount)
+            ? order.discount
+            : 0;
+
     return (
         <main className="mx-auto max-w-4xl px-6 py-12">
             <Link
@@ -203,7 +216,45 @@ export default function OrderDetails() {
                         </span>
                     </div>
 
-                    <div className="mt-4 flex items-center justify-between gap-4">
+                    {hasPriceBreakdown && (
+                        <div className="mt-5 space-y-3">
+                            <div className="flex items-center justify-between gap-4">
+                                <span className="text-slate-600">
+                                    Subtotal
+                                </span>
+
+                                <span className="font-medium text-slate-900">
+                                    {formatPrice(order.subtotal!)}
+                                </span>
+                            </div>
+
+                            {savedDiscount > 0 && (
+                                <div className="flex items-center justify-between gap-4">
+                                    <span className="text-green-700">
+                                        Discount
+                                    </span>
+
+                                    <span className="font-medium text-green-700">
+                                        -{formatPrice(savedDiscount)}
+                                    </span>
+                                </div>
+                            )}
+
+                            <div className="flex items-center justify-between gap-4">
+                                <span className="text-slate-600">
+                                    Shipping
+                                </span>
+
+                                <span className="font-medium text-slate-900">
+                                    {order.shippingCost === 0
+                                        ? "Free"
+                                        : formatPrice(order.shippingCost!)}
+                                </span>
+                            </div>
+                        </div>
+                    )}
+
+                    <div className="mt-5 flex items-center justify-between gap-4 border-t border-slate-200 pt-4">
                         <span className="text-lg font-semibold text-slate-900">
                             Order Total
                         </span>

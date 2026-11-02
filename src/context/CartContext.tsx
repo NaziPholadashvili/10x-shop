@@ -1,55 +1,71 @@
 
 import {
     useEffect,
-    useState,
+    useReducer,
     type ReactNode,
 } from "react";
 import type { Product } from "../types/product";
 import { CartContext, type CartItem } from "./cart-context";
-import { discountedPrice } from "../utils/price";
+import {
+    cartReducer,
+    type CartState,
+} from "./cart.reducer";
+import { Cart } from "../models/Cart";
 
 const CART_STORAGE_KEY = "10x-shop-cart";
 
-function loadCart(): CartItem[] {
+function loadCart(): CartState {
+    const emptyCart: CartState = {
+        items: [],
+        promoCode: null,
+    };
+
     try {
         const savedCart = localStorage.getItem(CART_STORAGE_KEY);
 
         if (!savedCart) {
-            return [];
+            return emptyCart;
         }
 
         const parsed: unknown = JSON.parse(savedCart);
 
         if (!Array.isArray(parsed)) {
-            return [];
+            return emptyCart;
         }
 
-        return parsed.filter((item): item is CartItem => {
-            if (typeof item !== "object" || item === null) {
-                return false;
+        const validItems = parsed.filter(
+            (item): item is CartItem => {
+                if (typeof item !== "object" || item === null) {
+                    return false;
+                }
+
+                const cartItem = item as Partial<CartItem>;
+                const product = cartItem.product;
+
+                return (
+                    typeof product === "object" &&
+                    product !== null &&
+                    typeof product.id === "number" &&
+                    typeof product.title === "string" &&
+                    typeof product.price === "number" &&
+                    Number.isFinite(product.price) &&
+                    typeof product.stock === "number" &&
+                    Number.isInteger(product.stock) &&
+                    product.stock > 0 &&
+                    typeof cartItem.quantity === "number" &&
+                    Number.isInteger(cartItem.quantity) &&
+                    cartItem.quantity >= 1 &&
+                    cartItem.quantity <= product.stock
+                );
             }
+        );
 
-            const cartItem = item as Partial<CartItem>;
-            const product = cartItem.product;
-
-            return (
-                typeof product === "object" &&
-                product !== null &&
-                typeof product.id === "number" &&
-                typeof product.title === "string" &&
-                typeof product.price === "number" &&
-                Number.isFinite(product.price) &&
-                typeof product.stock === "number" &&
-                Number.isInteger(product.stock) &&
-                product.stock > 0 &&
-                typeof cartItem.quantity === "number" &&
-                Number.isInteger(cartItem.quantity) &&
-                cartItem.quantity >= 1 &&
-                cartItem.quantity <= product.stock
-            );
-        });
+        return {
+            items: validItems,
+            promoCode: null,
+        };
     } catch {
-        return [];
+        return emptyCart;
     }
 }
 
@@ -58,7 +74,13 @@ export function CartProvider({
 }: {
     children: ReactNode;
 }) {
-    const [items, setItems] = useState<CartItem[]>(loadCart);
+    const [state, dispatch] = useReducer(
+        cartReducer,
+        undefined,
+        loadCart
+    );
+
+    const { items, promoCode } = state;
 
     useEffect(() => {
         try {
@@ -72,90 +94,38 @@ export function CartProvider({
     }, [items]);
 
     function addToCart(product: Product, quantity = 1) {
-        if (
-            !Number.isInteger(quantity) ||
-            quantity < 1 ||
-            !Number.isInteger(product.stock) ||
-            product.stock < 1
-        ) {
-            return;
-        }
-
-        setItems((currentItems) => {
-            const existingItem = currentItems.find(
-                (item) => item.product.id === product.id
-            );
-
-            if (existingItem) {
-                return currentItems.map((item) =>
-                    item.product.id === product.id
-                        ? {
-                            ...item,
-                            quantity: Math.min(
-                                item.quantity + quantity,
-                                product.stock
-                            ),
-                        }
-                        : item
-                );
-            }
-
-            return [
-                ...currentItems,
-                {
-                    product,
-                    quantity: Math.min(quantity, product.stock),
-                },
-            ];
+        dispatch({
+            type: "ADD_ITEM",
+            product,
+            qty: quantity,
         });
     }
 
     function removeFromCart(productId: number) {
-        setItems((currentItems) =>
-            currentItems.filter(
-                (item) => item.product.id !== productId
-            )
-        );
+        dispatch({
+            type: "REMOVE_ITEM",
+            productId,
+        });
     }
 
     function updateQuantity(productId: number, quantity: number) {
-        setItems((currentItems) =>
-            currentItems.map((item) =>
-                item.product.id === productId
-                    ? {
-                        ...item,
-                        quantity: Math.max(
-                            1,
-                            Math.min(
-                                Math.trunc(quantity) || 1,
-                                item.product.stock
-                            )
-                        ),
-                    }
-                    : item
-            )
-        );
+        dispatch({
+            type: "SET_QTY",
+            productId,
+            qty: quantity,
+        });
     }
 
     function clearCart() {
-        setItems([]);
+        dispatch({ type: "CLEAR" });
     }
 
-    const totalItems = items.reduce(
-        (total, item) => total + item.quantity,
-        0
-    );
+    const cart = new Cart(items, promoCode);
 
-    const totalPrice = items.reduce((total, item) => {
-        const { price, discountPercentage } = item.product;
-
-        const unitPrice =
-            discountPercentage >= 1
-                ? discountedPrice(price, discountPercentage)
-                : price;
-
-        return total + unitPrice * item.quantity;
-    }, 0);
+    const totalItems = cart.itemCount;
+    const subtotal = cart.subtotal();
+    const shippingCost = cart.shipping();
+    const totalPrice = cart.total();
 
     return (
         <CartContext.Provider
@@ -166,6 +136,8 @@ export function CartProvider({
                 updateQuantity,
                 clearCart,
                 totalItems,
+                subtotal,
+                shippingCost,
                 totalPrice,
             }}
         >
