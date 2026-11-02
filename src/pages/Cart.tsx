@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useCart } from "../context/useCart";
 import type { CartItem } from "../context/cart-context";
+import { discountedPrice, formatPrice } from "../utils/price";
 
 function CartProduct({ item }: { item: CartItem }) {
     const { updateQuantity, removeFromCart } = useCart();
@@ -17,6 +18,15 @@ function CartProduct({ item }: { item: CartItem }) {
     const displayedQuantity = isEditing
         ? quantityInput
         : String(quantity);
+
+    const hasDiscount = product.discountPercentage >= 1;
+
+    const unitPrice = hasDiscount
+        ? discountedPrice(
+            product.price,
+            product.discountPercentage
+        )
+        : product.price;
 
     function handleQuantityChange(value: string) {
         if (value !== "" && !/^\d+$/.test(value)) {
@@ -76,8 +86,30 @@ function CartProduct({ item }: { item: CartItem }) {
                     {product.title}
                 </Link>
 
-                <p className="mt-2 text-indigo-600">
-                    ${product.price.toFixed(2)}
+                <div className="mt-2 flex flex-wrap items-center gap-2">
+                    <span className="font-semibold text-indigo-600">
+                        {formatPrice(unitPrice)}
+                    </span>
+
+                    {hasDiscount && (
+                        <>
+                            <span className="text-sm text-slate-400 line-through">
+                                {formatPrice(product.price)}
+                            </span>
+
+                            <span className="rounded bg-green-100 px-2 py-1 text-xs font-semibold text-green-700">
+                                -{Math.round(product.discountPercentage)}%
+                            </span>
+                        </>
+                    )}
+                </div>
+
+                <p className="mt-2 text-sm text-slate-500">
+                    Item subtotal: {formatPrice(
+                        Math.round(
+                            (unitPrice * quantity + Number.EPSILON) * 100
+                        ) / 100
+                    )}
                 </p>
             </div>
 
@@ -156,7 +188,7 @@ export default function Cart() {
                     </p>
 
                     <Link
-                        to="/"
+                        to="/products"
                         className="font-semibold text-indigo-600"
                     >
                         Browse Products
@@ -175,7 +207,7 @@ export default function Cart() {
                         <p>Total items: {totalItems}</p>
 
                         <p className="mt-2 text-xl font-bold">
-                            Total: ${totalPrice.toFixed(2)}
+                            Total: {formatPrice(totalPrice)}
                         </p>
 
                         <div className="mt-5 flex flex-wrap items-center gap-4">

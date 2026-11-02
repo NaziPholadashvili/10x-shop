@@ -5,6 +5,7 @@ import { useAuth } from "../context/useAuth";
 import { useCart } from "../context/useCart";
 import { useOrders } from "../context/useOrders";
 import { getOrderStatus } from "../utils/orderStatus";
+import { formatPrice } from "../utils/price";
 import type { OrderStatus } from "../types/order";
 
 const statusSteps: OrderStatus[] = [
@@ -36,6 +37,22 @@ export default function OrderDetails() {
         (item) => item.id === id && item.userId === username
     );
 
+    function handleReorder() {
+        const currentOrder = orders.find(
+            (item) => item.id === id && item.userId === username
+        );
+
+        if (!currentOrder) {
+            return;
+        }
+
+        currentOrder.items.forEach((item) => {
+            addToCart(item.product, item.quantity);
+        });
+
+        navigate("/cart");
+    }
+
     if (!order) {
         return (
             <main className="mx-auto max-w-4xl px-6 py-12">
@@ -60,18 +77,6 @@ export default function OrderDetails() {
 
     const status = getOrderStatus(order.createdAt, currentTime);
     const currentStepIndex = statusSteps.indexOf(status);
-
-    function handleReorder() {
-        if (!order) {
-            return;
-        }
-
-        order.items.forEach((item) => {
-            addToCart(item.product, item.quantity);
-        });
-
-        navigate("/cart");
-    }
 
     return (
         <main className="mx-auto max-w-4xl px-6 py-12">
@@ -148,33 +153,43 @@ export default function OrderDetails() {
                 </h2>
 
                 <ul className="divide-y divide-slate-200">
-                    {order.items.map((item) => (
-                        <li
-                            key={item.product.id}
-                            className="flex flex-wrap items-center justify-between gap-4 py-4"
-                        >
-                            <div>
-                                <h3 className="font-semibold text-slate-900">
-                                    {item.product.title}
-                                </h3>
+                    {order.items.map((item) => {
+                        const unitPrice =
+                            item.unitPrice ?? item.product.price;
 
-                                <p className="mt-1 text-sm text-slate-600">
-                                    Quantity: {item.quantity}
+                        const lineTotal =
+                            Math.round(
+                                (
+                                    unitPrice * item.quantity +
+                                    Number.EPSILON
+                                ) * 100
+                            ) / 100;
+
+                        return (
+                            <li
+                                key={item.product.id}
+                                className="flex flex-wrap items-center justify-between gap-4 py-4"
+                            >
+                                <div>
+                                    <h3 className="font-semibold text-slate-900">
+                                        {item.product.title}
+                                    </h3>
+
+                                    <p className="mt-1 text-sm text-slate-600">
+                                        Quantity: {item.quantity}
+                                    </p>
+
+                                    <p className="mt-1 text-sm text-slate-600">
+                                        Unit price: {formatPrice(unitPrice)}
+                                    </p>
+                                </div>
+
+                                <p className="font-semibold text-slate-900">
+                                    {formatPrice(lineTotal)}
                                 </p>
-
-                                <p className="mt-1 text-sm text-slate-600">
-                                    Unit price: ${item.product.price.toFixed(2)}
-                                </p>
-                            </div>
-
-                            <p className="font-semibold text-slate-900">
-                                $
-                                {(
-                                    item.product.price * item.quantity
-                                ).toFixed(2)}
-                            </p>
-                        </li>
-                    ))}
+                            </li>
+                        );
+                    })}
                 </ul>
 
                 <div className="mt-4 border-t border-slate-200 pt-5">
@@ -194,7 +209,7 @@ export default function OrderDetails() {
                         </span>
 
                         <span className="text-2xl font-bold text-indigo-700">
-                            ${order.totalPrice.toFixed(2)}
+                            {formatPrice(order.totalPrice)}
                         </span>
                     </div>
                 </div>

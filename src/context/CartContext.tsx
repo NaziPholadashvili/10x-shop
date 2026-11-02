@@ -6,6 +6,7 @@ import {
 } from "react";
 import type { Product } from "../types/product";
 import { CartContext, type CartItem } from "./cart-context";
+import { discountedPrice } from "../utils/price";
 
 const CART_STORAGE_KEY = "10x-shop-cart";
 
@@ -145,11 +146,16 @@ export function CartProvider({
         0
     );
 
-    const totalPrice = items.reduce(
-        (total, item) =>
-            total + item.product.price * item.quantity,
-        0
-    );
+    const totalPrice = items.reduce((total, item) => {
+        const { price, discountPercentage } = item.product;
+
+        const unitPrice =
+            discountPercentage >= 1
+                ? discountedPrice(price, discountPercentage)
+                : price;
+
+        return total + unitPrice * item.quantity;
+    }, 0);
 
     return (
         <CartContext.Provider

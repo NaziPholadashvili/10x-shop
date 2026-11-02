@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../context/useAuth";
 import { useOrders } from "../context/useOrders";
 import { getOrderStatus } from "../utils/orderStatus";
+import { formatPrice } from "../utils/price";
 
 export default function Orders() {
     const { username } = useAuth();
@@ -89,25 +90,35 @@ export default function Orders() {
                                 </div>
 
                                 <ul className="space-y-3 border-t py-4">
-                                    {order.items.map((item) => (
-                                        <li
-                                            key={item.product.id}
-                                            className="flex justify-between gap-4"
-                                        >
-                                            <span>
-                                                {item.product.title} ×{" "}
-                                                {item.quantity}
-                                            </span>
+                                    {order.items.map((item) => {
+                                        const unitPrice =
+                                            item.unitPrice ??
+                                            item.product.price;
 
-                                            <span className="font-medium">
-                                                $
-                                                {(
-                                                    item.product.price *
-                                                    item.quantity
-                                                ).toFixed(2)}
-                                            </span>
-                                        </li>
-                                    ))}
+                                        const lineTotal =
+                                            Math.round(
+                                                (
+                                                    unitPrice * item.quantity +
+                                                    Number.EPSILON
+                                                ) * 100
+                                            ) / 100;
+
+                                        return (
+                                            <li
+                                                key={item.product.id}
+                                                className="flex justify-between gap-4"
+                                            >
+                                                <span>
+                                                    {item.product.title} ×{" "}
+                                                    {item.quantity}
+                                                </span>
+
+                                                <span className="font-medium">
+                                                    {formatPrice(lineTotal)}
+                                                </span>
+                                            </li>
+                                        );
+                                    })}
                                 </ul>
 
                                 <div className="border-t pt-4">
@@ -116,7 +127,7 @@ export default function Orders() {
                                     </p>
 
                                     <p className="mt-2 text-xl font-bold text-slate-900">
-                                        Total: ${order.totalPrice.toFixed(2)}
+                                        Total: {formatPrice(order.totalPrice)}
                                     </p>
 
                                     <Link
