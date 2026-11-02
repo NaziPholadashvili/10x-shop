@@ -5,6 +5,7 @@ import { useCart } from "../context/useCart";
 import { useAuth } from "../context/useAuth";
 import { useOrders } from "../context/useOrders";
 import type { Order } from "../types/order";
+import { discountedPrice, formatPrice } from "../utils/price";
 
 export default function Checkout() {
     const { items, totalItems, totalPrice, clearCart } = useCart();
@@ -56,13 +57,25 @@ export default function Checkout() {
         setIsSubmitting(true);
 
         try {
+            const orderItems = items.map((item) => {
+                const { price, discountPercentage } = item.product;
+
+                const unitPrice =
+                    discountPercentage >= 1
+                        ? discountedPrice(price, discountPercentage)
+                        : price;
+
+                return {
+                    product: { ...item.product },
+                    quantity: item.quantity,
+                    unitPrice,
+                };
+            });
+
             const newOrder: Order = {
                 id: crypto.randomUUID(),
                 userId: username,
-                items: items.map((item) => ({
-                    product: { ...item.product },
-                    quantity: item.quantity,
-                })),
+                items: orderItems,
                 totalItems,
                 totalPrice,
                 shippingInformation: {
@@ -109,7 +122,7 @@ export default function Checkout() {
                 </p>
 
                 <p className="mb-6 text-2xl font-bold text-slate-900">
-                    Order Total: ${placedOrder.totalPrice.toFixed(2)}
+                    Order Total: {formatPrice(placedOrder.totalPrice)}
                 </p>
 
                 <div className="flex flex-wrap justify-center gap-4">
@@ -139,7 +152,7 @@ export default function Checkout() {
                 </h1>
 
                 <Link
-                    to="/"
+                    to="/products"
                     className="text-indigo-600 hover:underline"
                 >
                     Browse Products
@@ -160,27 +173,47 @@ export default function Checkout() {
                 </h2>
 
                 <ul className="space-y-3">
-                    {items.map((item) => (
-                        <li
-                            key={item.product.id}
-                            className="flex justify-between gap-4"
-                        >
-                            <span>
-                                {item.product.title} × {item.quantity}
-                            </span>
+                    {items.map((item) => {
+                        const { product, quantity } = item;
 
-                            <span className="font-medium">
-                                ${(item.product.price * item.quantity).toFixed(2)}
-                            </span>
-                        </li>
-                    ))}
+                        const unitPrice =
+                            product.discountPercentage >= 1
+                                ? discountedPrice(
+                                    product.price,
+                                    product.discountPercentage
+                                )
+                                : product.price;
+
+                        const lineTotal =
+                            Math.round(
+                                (
+                                    unitPrice * quantity +
+                                    Number.EPSILON
+                                ) * 100
+                            ) / 100;
+
+                        return (
+                            <li
+                                key={product.id}
+                                className="flex justify-between gap-4"
+                            >
+                                <span>
+                                    {product.title} × {quantity}
+                                </span>
+
+                                <span className="font-medium">
+                                    {formatPrice(lineTotal)}
+                                </span>
+                            </li>
+                        );
+                    })}
                 </ul>
 
                 <div className="mt-5 border-t pt-4">
                     <p>Total items: {totalItems}</p>
 
                     <p className="mt-2 text-xl font-bold">
-                        Total: ${totalPrice.toFixed(2)}
+                        Total: {formatPrice(totalPrice)}
                     </p>
                 </div>
             </section>
