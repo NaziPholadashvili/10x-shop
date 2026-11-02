@@ -24,6 +24,11 @@ export interface Order {
     userId: string;
     items: OrderItem[];
     totalItems: number;
+
+    subtotal?: number;
+    discount?: number;
+    shippingCost?: number;
+
     totalPrice: number;
     shippingInformation: ShippingInformation;
     createdAt: string;

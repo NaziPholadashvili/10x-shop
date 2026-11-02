@@ -105,7 +105,8 @@ function CartProduct({ item }: { item: CartItem }) {
                 </div>
 
                 <p className="mt-2 text-sm text-slate-500">
-                    Item subtotal: {formatPrice(
+                    Item subtotal:{" "}
+                    {formatPrice(
                         Math.round(
                             (unitPrice * quantity + Number.EPSILON) * 100
                         ) / 100
@@ -172,6 +173,8 @@ export default function Cart() {
         items,
         clearCart,
         totalItems,
+        subtotal,
+        shippingCost,
         totalPrice,
     } = useCart();
 
@@ -204,10 +207,45 @@ export default function Cart() {
                     ))}
 
                     <section className="rounded-xl bg-white p-6 shadow-sm">
-                        <p>Total items: {totalItems}</p>
+                        <h2 className="mb-4 text-xl font-semibold">
+                            Order Summary
+                        </h2>
 
-                        <p className="mt-2 text-xl font-bold">
-                            Total: {formatPrice(totalPrice)}
+                        <p className="mb-4 text-slate-600">
+                            Total items: {totalItems}
+                        </p>
+
+                        <div className="space-y-3">
+                            <div className="flex justify-between">
+                                <span className="text-slate-600">
+                                    Subtotal
+                                </span>
+                                <span>
+                                    {formatPrice(subtotal)}
+                                </span>
+                            </div>
+
+                            <div className="flex justify-between">
+                                <span className="text-slate-600">
+                                    Shipping
+                                </span>
+                                <span>
+                                    {shippingCost === 0
+                                        ? "Free"
+                                        : formatPrice(shippingCost)}
+                                </span>
+                            </div>
+
+                            <div className="flex justify-between border-t border-slate-200 pt-4 text-xl font-bold">
+                                <span>Total</span>
+                                <span>
+                                    {formatPrice(totalPrice)}
+                                </span>
+                            </div>
+                        </div>
+
+                        <p className="mt-3 text-sm text-slate-500">
+                            Free shipping on orders of $100 or more.
                         </p>
 
                         <div className="mt-5 flex flex-wrap items-center gap-4">

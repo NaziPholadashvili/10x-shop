@@ -8,7 +8,17 @@ import type { Order } from "../types/order";
 import { discountedPrice, formatPrice } from "../utils/price";
 
 export default function Checkout() {
-    const { items, totalItems, totalPrice, clearCart } = useCart();
+    const {
+        items,
+        totalItems,
+        subtotal,
+        shippingCost,
+        totalPrice,
+        clearCart,
+    } = useCart();
+
+    const discount = 0;
+
     const { username } = useAuth();
     const { addOrder } = useOrders();
 
@@ -77,6 +87,9 @@ export default function Checkout() {
                 userId: username,
                 items: orderItems,
                 totalItems,
+                subtotal,
+                discount,
+                shippingCost,
                 totalPrice,
                 shippingInformation: {
                     fullName: fullName.trim(),
@@ -209,11 +222,42 @@ export default function Checkout() {
                     })}
                 </ul>
 
-                <div className="mt-5 border-t pt-4">
-                    <p>Total items: {totalItems}</p>
+                <div className="mt-5 border-t border-slate-200 pt-4">
+                    <p className="mb-4 text-slate-600">
+                        Total items: {totalItems}
+                    </p>
 
-                    <p className="mt-2 text-xl font-bold">
-                        Total: {formatPrice(totalPrice)}
+                    <div className="space-y-3">
+                        <div className="flex justify-between">
+                            <span className="text-slate-600">
+                                Subtotal
+                            </span>
+                            <span>
+                                {formatPrice(subtotal)}
+                            </span>
+                        </div>
+
+                        <div className="flex justify-between">
+                            <span className="text-slate-600">
+                                Shipping
+                            </span>
+                            <span>
+                                {shippingCost === 0
+                                    ? "Free"
+                                    : formatPrice(shippingCost)}
+                            </span>
+                        </div>
+
+                        <div className="flex justify-between border-t border-slate-200 pt-4 text-xl font-bold">
+                            <span>Total</span>
+                            <span>
+                                {formatPrice(totalPrice)}
+                            </span>
+                        </div>
+                    </div>
+
+                    <p className="mt-3 text-sm text-slate-500">
+                        Free shipping on orders of $100 or more.
                     </p>
                 </div>
             </section>
