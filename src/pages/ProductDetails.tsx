@@ -7,6 +7,7 @@ import { useCart } from "../context/useCart";
 import { useAuth } from "../context/useAuth";
 import RelatedProducts from "../components/RelatedProducts";
 import type { Product, ProductReview } from "../types/product";
+import { discountedPrice, formatPrice } from "../utils/price";
 
 const REVIEWS_STORAGE_KEY = "shop_reviews";
 
@@ -205,7 +206,7 @@ export default function ProductDetails() {
                 </p>
 
                 <Link
-                    to="/"
+                    to="/products"
                     className="mt-4 inline-block text-indigo-600"
                 >
                     Back to Products
@@ -219,6 +220,16 @@ export default function ProductDetails() {
     );
 
     const quantityInCart = cartItem?.quantity ?? 0;
+
+    // Discounted product price
+    const hasDiscount = product.discountPercentage >= 1;
+
+    const finalPrice = hasDiscount
+        ? discountedPrice(
+            product.price,
+            product.discountPercentage
+        )
+        : product.price;
 
     const remainingStock = Math.max(
         0,
@@ -382,7 +393,7 @@ export default function ProductDetails() {
     return (
         <main className="mx-auto max-w-6xl p-8">
             <Link
-                to="/"
+                to="/products"
                 className="text-indigo-600 hover:underline"
             >
                 ← Back to Products
@@ -446,13 +457,34 @@ export default function ProductDetails() {
                         {product.title}
                     </h1>
 
-                    <p className="mt-4 text-2xl font-bold text-indigo-600">
-                        ${product.price.toFixed(2)}
-                    </p>
+                    {/* Discounted price, original price and badge */}
+                    <div className="mt-4 flex flex-wrap items-center gap-3">
+                        <span className="text-2xl font-bold text-indigo-600">
+                            {formatPrice(finalPrice)}
+                        </span>
+
+                        {hasDiscount && (
+                            <>
+                                <span className="text-lg text-slate-400 line-through">
+                                    {formatPrice(product.price)}
+                                </span>
+
+                                <span className="rounded-md bg-green-100 px-2 py-1 text-sm font-semibold text-green-700">
+                                    −{Math.round(product.discountPercentage)}%
+                                </span>
+                            </>
+                        )}
+                    </div>
 
                     <p className="mt-4 text-slate-700">
                         <strong>Category:</strong> {product.category}
                     </p>
+
+                    {product.brand && (
+                        <p className="mt-2 text-slate-700">
+                            <strong>Brand:</strong> {product.brand}
+                        </p>
+                    )}
 
                     <p className="mt-2 text-slate-700">
                         <strong>Stock:</strong> {product.stock}

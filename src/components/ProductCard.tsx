@@ -2,6 +2,7 @@
 import { Link } from "react-router-dom";
 import { useCart } from "../context/useCart";
 import type { Product } from "../types/product";
+import { discountedPrice, formatPrice } from "../utils/price";
 
 interface ProductCardProps {
     product: Product;
@@ -10,6 +11,11 @@ interface ProductCardProps {
 export default function ProductCard({ product }: ProductCardProps) {
     const { addToCart } = useCart();
 
+    const hasDiscount = product.discountPercentage >= 1;
+    const finalPrice = hasDiscount
+        ? discountedPrice(product.price, product.discountPercentage)
+        : product.price;
+
     return (
         <article className="rounded-xl bg-white p-4 shadow-sm transition hover:shadow-md">
             <Link to={`/products/${product.id}`} className="block">
@@ -17,6 +23,8 @@ export default function ProductCard({ product }: ProductCardProps) {
                     src={product.thumbnail}
                     alt={product.title}
                     loading="lazy"
+                    width={320}
+                    height={192}
                     className="h-48 w-full object-contain"
                 />
 
@@ -24,8 +32,43 @@ export default function ProductCard({ product }: ProductCardProps) {
                     {product.title}
                 </h2>
 
-                <p className="mt-2 font-bold text-indigo-600">
-                    ${product.price.toFixed(2)}
+                <p className="mt-1 text-sm text-slate-500">
+                    {product.category}
+                    {product.brand ? ` · ${product.brand}` : ""}
+                </p>
+
+                <div className="mt-2 flex flex-wrap items-center gap-2">
+                    <span className="font-bold text-indigo-600">
+                        {formatPrice(finalPrice)}
+                    </span>
+
+                    {hasDiscount && (
+                        <>
+                            <span className="text-sm text-slate-400 line-through">
+                                {formatPrice(product.price)}
+                            </span>
+
+                            <span className="rounded bg-green-100 px-2 py-1 text-xs font-semibold text-green-700">
+                                −{Math.round(product.discountPercentage)}%
+                            </span>
+                        </>
+                    )}
+                </div>
+
+                <p className="mt-2 text-sm text-amber-600">
+                    ★ {product.rating.toFixed(1)}
+                </p>
+
+                <p className="mt-2 text-sm font-medium">
+                    {product.stock === 0 ? (
+                        <span className="text-red-600">Out of stock</span>
+                    ) : product.stock <= 5 ? (
+                        <span className="text-orange-600">
+                            Only {product.stock} left!
+                        </span>
+                    ) : (
+                        <span className="text-green-700">In stock</span>
+                    )}
                 </p>
             </Link>
 
