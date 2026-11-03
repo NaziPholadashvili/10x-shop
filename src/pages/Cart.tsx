@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 import { Link } from "react-router-dom";
 import { useCart } from "../context/useCart";
 import type { CartItem } from "../context/cart-context";
@@ -12,7 +12,6 @@ function CartProduct({ item }: { item: CartItem }) {
     const [quantityInput, setQuantityInput] = useState(
         String(quantity)
     );
-
     const [isEditing, setIsEditing] = useState(false);
 
     const displayedQuantity = isEditing
@@ -174,9 +173,37 @@ export default function Cart() {
         clearCart,
         totalItems,
         subtotal,
+        promoCode,
+        discount,
+        applyPromo,
+        removePromo,
         shippingCost,
         totalPrice,
     } = useCart();
+
+    const [promoInput, setPromoInput] = useState("");
+    const [promoError, setPromoError] = useState("");
+
+    function handleApplyPromo(event: FormEvent<HTMLFormElement>) {
+        event.preventDefault();
+
+        const success = applyPromo(promoInput);
+
+        if (success) {
+            setPromoError("");
+            setPromoInput("");
+        } else {
+            setPromoError(
+                "Invalid promo code. Please try again."
+            );
+        }
+    }
+
+    function handleRemovePromo() {
+        removePromo();
+        setPromoInput("");
+        setPromoError("");
+    }
 
     return (
         <main className="mx-auto max-w-5xl px-6 py-10">
@@ -215,6 +242,80 @@ export default function Cart() {
                             Total items: {totalItems}
                         </p>
 
+                        <div className="mb-6">
+                            <h3 className="mb-3 font-semibold">
+                                Promo Code
+                            </h3>
+
+                            {promoCode ? (
+                                <div className="flex flex-wrap items-center gap-3">
+                                    <p
+                                        role="status"
+                                        className="text-sm font-medium text-green-700"
+                                    >
+                                        Promo code {promoCode} applied
+                                        (10% off).
+                                    </p>
+
+                                    <button
+                                        type="button"
+                                        onClick={handleRemovePromo}
+                                        className="rounded-lg border border-red-500 px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50"
+                                    >
+                                        Remove Promo
+                                    </button>
+                                </div>
+                            ) : (
+                                <form
+                                    onSubmit={handleApplyPromo}
+                                    className="space-y-3"
+                                >
+                                    <div className="flex flex-wrap gap-3">
+                                        <input
+                                            type="text"
+                                            aria-label="Promo code"
+                                            placeholder="Enter promo code"
+                                            value={promoInput}
+                                            onChange={(event) => {
+                                                setPromoInput(
+                                                    event.target.value
+                                                );
+                                                setPromoError("");
+                                            }}
+                                            aria-invalid={
+                                                promoError
+                                                    ? true
+                                                    : undefined
+                                            }
+                                            aria-describedby={
+                                                promoError
+                                                    ? "promo-error"
+                                                    : undefined
+                                            }
+                                            className="min-w-0 flex-1 rounded-lg border border-slate-300 px-4 py-2"
+                                        />
+
+                                        <button
+                                            type="submit"
+                                            className="rounded-lg bg-indigo-600 px-5 py-2 font-semibold text-white hover:bg-indigo-700"
+                                        >
+                                            Apply
+                                        </button>
+                                    </div>
+
+                                    {promoError && (
+                                        <p
+                                            id="promo-error"
+                                            role="alert"
+                                            className="text-sm text-red-600"
+                                        >
+                                            {promoError}
+                                        </p>
+                                    )}
+                                </form>
+                            )}
+                        </div>
+
                         <div className="space-y-3">
                             <div className="flex justify-between">
                                 <span className="text-slate-600">
@@ -224,6 +325,17 @@ export default function Cart() {
                                     {formatPrice(subtotal)}
                                 </span>
                             </div>
+
+                            {promoCode && (
+                                <div className="flex justify-between text-green-700">
+                                    <span>
+                                        Discount (10%)
+                                    </span>
+                                    <span>
+                                        -{formatPrice(discount)}
+                                    </span>
+                                </div>
+                            )}
 
                             <div className="flex justify-between">
                                 <span className="text-slate-600">
@@ -245,7 +357,8 @@ export default function Cart() {
                         </div>
 
                         <p className="mt-3 text-sm text-slate-500">
-                            Free shipping on orders of $100 or more.
+                            Free shipping on orders of $100 or more
+                            after discounts.
                         </p>
 
                         <div className="mt-5 flex flex-wrap items-center gap-4">
