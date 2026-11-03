@@ -1,5 +1,9 @@
 # 10X Shop
 
+**Live Demo:** https://10x-shop-flax.vercel.app
+
+**GitHub Repository:** https://github.com/NaziPholadashvili/10x-shop
+
 10X Shop is a responsive e-commerce demo application built with React, TypeScript, Vite, and Tailwind CSS.
 
 The application allows users to browse products, search and filter the catalog, view product details and reviews, manage a shopping cart, log in using demo authentication, apply promotional discounts, and place demo orders.
@@ -19,6 +23,7 @@ Product data is retrieved from the DummyJSON API. Authentication state, cart con
 - Browser localStorage
 - ESLint
 - Git and GitHub
+- Vercel
 
 ## Features
 
@@ -273,6 +278,7 @@ PLAN.md
 REPORT.md
 DEBUG-LOG.md
 README.md
+vercel.json
 ```
 
 The structure above summarizes the main modules. Additional context definitions, custom hooks, reusable components, and utility files support the application.
@@ -354,6 +360,7 @@ The application includes:
 - TypeScript strict checks
 - ESLint checks
 - Production build verification
+- Vercel SPA routing fallback for direct navigation and page refreshes
 
 Debugging activities and test observations are documented in `DEBUG-LOG.md`.
 
@@ -364,6 +371,21 @@ npm run typecheck
 npm run lint
 npm run build
 ```
+
+### Production Verification
+
+The deployed application has been checked for:
+
+- Product catalog loading
+- Category filtering
+- Product search
+- Product sorting
+- Product details navigation
+- Adding products to the cart
+- Direct access to the cart route
+- Page refresh on product details and cart routes
+
+These checks were performed on the deployed Vercel application. Additional authentication, checkout, and order-flow testing can be performed as part of the final project verification.
 
 ## Development Progress
 
@@ -391,9 +413,21 @@ The repository also includes Git commit history, feature branches, and merged Pu
 
 ## Deployment
 
-Production deployment is planned.
+10X Shop is deployed to production on Vercel.
 
-The live application URL will be added after deployment is completed and verified.
+**Live Demo:** https://10x-shop-flax.vercel.app
+
+The application is connected to the GitHub repository and automatically deployed from the `main` branch using Vercel's Git integration.
+
+The Vercel project uses the Vite framework preset and the production build output generated in the `dist` directory.
+
+### SPA Routing Configuration
+
+The application uses React Router for client-side navigation.
+
+A `vercel.json` configuration file defines a rewrite to `/index.html`, allowing React Router to handle direct navigation and browser refreshes on application routes such as `/cart` and `/products/:id`.
+
+This configuration resolves the Vercel 404 error previously encountered when refreshing nested application routes.
 
 ## Repository
 
@@ -417,3 +451,4 @@ It demonstrates:
 - Error handling and recovery
 - Pricing and shipping calculations
 - Git and GitHub development workflows
+- Production deployment using Vercel
