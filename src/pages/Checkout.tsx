@@ -12,12 +12,12 @@ export default function Checkout() {
         items,
         totalItems,
         subtotal,
+        promoCode,
+        discount,
         shippingCost,
         totalPrice,
         clearCart,
     } = useCart();
-
-    const discount = 0;
 
     const { username } = useAuth();
     const { addOrder } = useOrders();
@@ -237,6 +237,17 @@ export default function Checkout() {
                             </span>
                         </div>
 
+                        {promoCode && (
+                            <div className="flex justify-between gap-4 text-green-700">
+                                <span>
+                                    Discount (10% — {promoCode})
+                                </span>
+                                <span>
+                                    -{formatPrice(discount)}
+                                </span>
+                            </div>
+                        )}
+
                         <div className="flex justify-between">
                             <span className="text-slate-600">
                                 Shipping
@@ -257,7 +268,8 @@ export default function Checkout() {
                     </div>
 
                     <p className="mt-3 text-sm text-slate-500">
-                        Free shipping on orders of $100 or more.
+                        Free shipping on orders of $100 or more
+                        after discounts.
                     </p>
                 </div>
             </section>
@@ -366,7 +378,10 @@ export default function Checkout() {
                 </div>
 
                 {error && (
-                    <p role="alert" className="text-sm text-red-600">
+                    <p
+                        role="alert"
+                        className="text-sm text-red-600"
+                    >
                         {error}
                     </p>
                 )}
@@ -376,7 +391,9 @@ export default function Checkout() {
                     disabled={isSubmitting}
                     className="w-full rounded-lg bg-indigo-600 px-4 py-3 font-semibold text-white hover:bg-indigo-700 disabled:cursor-not-allowed disabled:bg-slate-400"
                 >
-                    {isSubmitting ? "Placing Order..." : "Place Order"}
+                    {isSubmitting
+                        ? "Placing Order..."
+                        : "Place Order"}
                 </button>
             </form>
         </main>
