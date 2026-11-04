@@ -1,14 +1,15 @@
+
 # 10X Shop
 
 **Live Demo:** https://10x-shop-flax.vercel.app
 
 **GitHub Repository:** https://github.com/NaziPholadashvili/10x-shop
 
-10X Shop is a responsive e-commerce demo application built with React, TypeScript, Vite, and Tailwind CSS.
+10X Shop is a responsive e-commerce demo application built with React 19, TypeScript, Vite 8, Tailwind CSS 4, and React Router 7.
 
 The application allows users to browse products, search and filter the catalog, view product details and reviews, manage a shopping cart, log in using demo authentication, apply promotional discounts, and place demo orders.
 
-Product data is retrieved from the DummyJSON API. Authentication state, cart contents, promotional codes, product reviews, and order history are stored locally in the browser using localStorage.
+Product data is retrieved from the DummyJSON API. Authentication state, cart contents, promotional codes, product reviews, profile information, and order history are stored locally in the browser using localStorage.
 
 ## Technologies
 
@@ -36,8 +37,7 @@ Product data is retrieved from the DummyJSON API. Authentication state, cart con
 - Pagination with 12 products per page
 - URL-based catalog state using search parameters
 - Clear Filters functionality
-- Product detail pages
-- Reusable product card components
+- Reusable product cards
 - Discounted product prices
 - Loading skeletons
 - Error handling and retry functionality
@@ -52,7 +52,9 @@ Product data is retrieved from the DummyJSON API. Authentication state, cart con
 - Related product recommendations
 - Navigation between related products
 - Product quantity selection
-- Add to Cart functionality
+- Stock-aware Add to Cart functionality
+- Invalid product ID validation
+- Not Found handling for missing products
 
 ### Shopping Cart
 
@@ -61,6 +63,7 @@ Product data is retrieved from the DummyJSON API. Authentication state, cart con
 - Update product quantities
 - Respect available product stock
 - Display cart item count in the header
+- Hide the cart badge when the cart is empty
 - Calculate item count and subtotal
 - Use discounted product prices in cart calculations
 - Manage cart state using a reducer
@@ -78,22 +81,25 @@ Product data is retrieved from the DummyJSON API. Authentication state, cart con
 
 - Login form with username and password fields
 - Required field validation
+- Minimum password length validation
 - Authentication state managed through React Context
 - Username persistence in localStorage
 - Logout functionality
 - Protected routes for checkout, orders, order details, and profile
+- Navigation back to the catalog from the login page
 
 Authentication is simulated for educational purposes. Login credentials are not verified by a backend service, and passwords are not stored.
 
 ### Checkout and Orders
 
 - Protected checkout page
+- Redirect from checkout to cart when the cart is empty
 - Order summary with quantities and prices
 - Discounted product prices in checkout calculations
 - Promotional discount and shipping cost calculation
 - Final order total calculation
 - Shipping information form
-- Form validation
+- Field-specific form validation
 - Prevention of duplicate order submissions
 - Demo order creation
 - Unique order IDs
@@ -145,13 +151,13 @@ The root route (`/`) displays the product catalog.
 
 Protected routes redirect unauthenticated users to the login page.
 
+Invalid product IDs and product requests returning HTTP 404 display the Not Found page.
+
 ## API Integration
 
 The application retrieves product information from the public DummyJSON API.
 
-Base URL:
-
-https://dummyjson.com/products
+**Base URL:** https://dummyjson.com/products
 
 ### API Endpoints
 
@@ -213,7 +219,11 @@ Open the local URL displayed in the terminal.
 
 The application uses simulated authentication.
 
-Enter a username and password in the login form. Authentication is handled locally and does not require a real account or backend authentication service.
+Enter a username and password in the login form.
+
+The username is required, and the password must contain at least six characters.
+
+Authentication is handled locally and does not require a real account or backend authentication service.
 
 Do not use real passwords.
 
@@ -307,6 +317,8 @@ Manages:
 
 Cart actions are organized using reducer-based state management.
 
+A Cart class centralizes subtotal, discount, shipping, and total calculations.
+
 ### OrdersProvider
 
 Manages locally stored orders, order history, and generated order numbers.
@@ -357,6 +369,7 @@ The application includes:
 - AbortController cleanup for asynchronous requests
 - React Error Boundary
 - Not Found route handling
+- Invalid product ID handling
 - TypeScript strict checks
 - ESLint checks
 - Production build verification
@@ -372,33 +385,57 @@ npm run lint
 npm run build
 ```
 
+### Local Verification
+
+The application has been checked for:
+
+- Product catalog search, filtering, sorting, and pagination
+- URL-based catalog behavior
+- Loading skeletons
+- API failure and Retry functionality
+- Error Boundary fallback
+- Product image gallery and related products
+- Cart quantity and stock handling
+- Promotional code and shipping calculations
+- Login validation
+- Checkout form validation
+- Order creation and order details
+- Invalid product IDs and missing products
+
 ### Production Verification
 
-The deployed application has been checked for:
+The deployed Vercel application has been checked for:
 
 - Product catalog loading
-- Category filtering
-- Product search
-- Product sorting
-- Product details navigation
-- Adding products to the cart
-- Direct access to the cart route
-- Page refresh on product details and cart routes
+- Product search, category filtering, sorting, and pagination
+- URL-based catalog state
+- Product details and related products
+- Shopping cart and shipping calculations
+- Demo authentication and protected routes
+- Checkout and order creation
+- Order history and order details
+- Reorder functionality
+- Profile persistence
+- Logout behavior
+- Login validation improvements
+- Checkout validation messages
+- Custom Not Found pages for invalid and missing product IDs
+- Direct navigation and refresh on nested application routes
 
-These checks were performed on the deployed Vercel application. Additional authentication, checkout, and order-flow testing can be performed as part of the final project verification.
+These checks were performed manually during development and production verification.
 
 ## Development Progress
 
 Development progress is documented in:
 
-- `PLAN.md` — Initial project plan
-- `REPORT.md` — Project progress and lessons learned
-- `DEBUG-LOG.md` — Debugging activities and observations
+- `PLAN.md` — Project plan, CORE/FULL scope, and development milestones
+- `REPORT.md` — Planned vs implemented features, testing, deployment, and lessons learned
+- `DEBUG-LOG.md` — Debugging cases, verification, and Git commit references
 - `progress/week-1.md` — October 20–26, 2026
 - `progress/week-2.md` — October 27 – November 2, 2026
-- `progress/week-3.md` — November 3, 2026
+- `progress/week-3.md` — November 3–6, 2026
 
-The repository also includes Git commit history, feature branches, and merged Pull Requests documenting the development process.
+The repository also includes Git commit history, feature branches, GitHub Issues, and merged Pull Requests documenting the development process.
 
 ## Limitations
 
@@ -413,7 +450,7 @@ The repository also includes Git commit history, feature branches, and merged Pu
 
 ## Deployment
 
-10X Shop is deployed to production on Vercel.
+10X Shop is deployed to Vercel.
 
 **Live Demo:** https://10x-shop-flax.vercel.app
 
@@ -452,3 +489,19 @@ It demonstrates:
 - Pricing and shipping calculations
 - Git and GitHub development workflows
 - Production deployment using Vercel
+
+## Credits
+
+**Developer:** Nazi Pholadashvili
+
+**Project:** 10X Shop — React & TypeScript Final Project
+
+**Product Data API:** [DummyJSON](https://dummyjson.com/) — public REST API used for product information, search, categories, and product details.
+
+**Frontend Technologies:** React, TypeScript, Vite, Tailwind CSS, and React Router.
+
+**Deployment Platform:** [Vercel](https://vercel.com/).
+
+**AI Assistance:** AI tools were used to support learning, explain technical concepts, review code, investigate errors, plan debugging steps, and improve documentation. Implementation changes were checked using code review, development tools, build verification, and manual browser testing.
+
+This project was developed for educational purposes.
