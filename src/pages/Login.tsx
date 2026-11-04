@@ -1,6 +1,6 @@
 
 import { useState, type FormEvent } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/useAuth";
 
 export default function Login() {
@@ -20,8 +20,18 @@ export default function Login() {
     function handleSubmit(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
 
-        if (!username.trim() || !password.trim()) {
-            setError("Username and password are required.");
+        if (!username.trim()) {
+            setError("Username is required");
+            return;
+        }
+
+        if (!password.trim()) {
+            setError("Password is required");
+            return;
+        }
+
+        if (password.length < 6) {
+            setError("Password must be at least 6 characters");
             return;
         }
 
@@ -32,12 +42,20 @@ export default function Login() {
 
     return (
         <main className="mx-auto max-w-md px-6 py-12">
+            <Link
+                to="/products"
+                className="mb-6 inline-block text-sm font-medium text-indigo-600 hover:underline"
+            >
+                ← Back to catalog
+            </Link>
+
             <h1 className="mb-8 text-3xl font-bold text-slate-900">
-                Login
+                Log in
             </h1>
 
             <form
                 onSubmit={handleSubmit}
+                noValidate
                 className="space-y-5 rounded-xl bg-white p-6 shadow-sm"
             >
                 <div>
@@ -76,6 +94,7 @@ export default function Login() {
                             setPassword(event.target.value)
                         }
                         required
+                        minLength={6}
                         className="w-full rounded-lg border border-slate-300 p-3"
                     />
                 </div>
@@ -90,7 +109,7 @@ export default function Login() {
                     type="submit"
                     className="w-full rounded-lg bg-indigo-600 px-4 py-3 font-semibold text-white hover:bg-indigo-700"
                 >
-                    Login
+                    Log in
                 </button>
             </form>
         </main>

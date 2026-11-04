@@ -49,12 +49,14 @@ export default function Header() {
                     >
                         <span className="inline-flex items-center gap-2">
                             Cart
-                            <span
-                                aria-label={`${totalItems} items in cart`}
-                                className="inline-flex min-w-6 items-center justify-center rounded-full bg-indigo-600 px-1.5 py-0.5 text-xs font-semibold text-white"
-                            >
-                                {totalItems}
-                            </span>
+                            {totalItems > 0 && (
+                                <span
+                                    aria-label={`${totalItems} items in cart`}
+                                    className="inline-flex min-w-6 items-center justify-center rounded-full bg-indigo-600 px-1.5 py-0.5 text-xs font-semibold text-white"
+                                >
+                                    {totalItems}
+                                </span>
+                            )}
                         </span>
                     </NavLink>
 
@@ -91,7 +93,7 @@ export default function Header() {
                                 onClick={handleLogout}
                                 className="rounded-lg bg-indigo-600 px-4 py-2 font-semibold text-white hover:bg-indigo-700"
                             >
-                                Logout
+                                Log out
                             </button>
                         </>
                     ) : (
@@ -99,7 +101,7 @@ export default function Header() {
                             to="/login"
                             className="rounded-lg bg-indigo-600 px-4 py-2 font-semibold text-white hover:bg-indigo-700"
                         >
-                            Login
+                            Log in
                         </NavLink>
                     )}
                 </nav>
