@@ -6,6 +6,7 @@ import { getProductById } from "../api/products";
 import { useCart } from "../context/useCart";
 import { useAuth } from "../context/useAuth";
 import RelatedProducts from "../components/RelatedProducts";
+import NotFound from "./NotFound";
 import type { Product, ProductReview } from "../types/product";
 import { discountedPrice, formatPrice } from "../utils/price";
 
@@ -65,12 +66,19 @@ function readStoredReviews(): StoredReviews {
 
 export default function ProductDetails() {
     const { id } = useParams<{ id: string }>();
+
+    const isValidProductId =
+        id !== undefined &&
+        /^[1-9]\d*$/.test(id) &&
+        Number.isSafeInteger(Number(id));
+
     const { addToCart, items } = useCart();
     const { username } = useAuth();
 
     const [product, setProduct] = useState<Product | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [notFound, setNotFound] = useState(false);
 
     // Product Gallery
     const [selectedImageIndex, setSelectedImageIndex] = useState(0);
@@ -102,9 +110,9 @@ export default function ProductDetails() {
             setLoading(true);
             setError(null);
             setProduct(null);
+            setNotFound(false);
 
-            if (!id) {
-                setError("Product ID is missing.");
+            if (!isValidProductId || !id) {
                 setLoading(false);
                 return;
             }
@@ -126,9 +134,16 @@ export default function ProductDetails() {
                     setReviewErrors({});
                     setReviewSuccess(false);
                 }
-            } catch {
+            } catch (caughtError) {
                 if (active) {
-                    setError("Product not found or failed to load.");
+                    if (
+                        caughtError instanceof Error &&
+                        /\bHTTP 404\b/.test(caughtError.message)
+                    ) {
+                        setNotFound(true);
+                    } else {
+                        setError("Product not found or failed to load.");
+                    }
                 }
             } finally {
                 if (active) {
@@ -142,7 +157,7 @@ export default function ProductDetails() {
         return () => {
             active = false;
         };
-    }, [id]);
+    }, [id, isValidProductId]);
 
     // Gallery images with thumbnail fallback
     const galleryImages = useMemo(() => {
@@ -194,6 +209,10 @@ export default function ProductDetails() {
         return total / allReviews.length;
     }, [allReviews, product?.rating]);
 
+    if (!isValidProductId || notFound) {
+        return <NotFound />;
+    }
+
     if (loading) {
         return <p className="p-8">Loading product...</p>;
     }
@@ -204,7 +223,6 @@ export default function ProductDetails() {
                 <p role="alert" className="text-red-600">
                     {error || "Product not found."}
                 </p>
-
                 <Link
                     to="/products"
                     className="mt-4 inline-block text-indigo-600"
