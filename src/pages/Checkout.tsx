@@ -1,11 +1,20 @@
 
 import { useRef, useState, type FormEvent } from "react";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { useCart } from "../context/useCart";
 import { useAuth } from "../context/useAuth";
 import { useOrders } from "../context/useOrders";
 import type { Order } from "../types/order";
 import { discountedPrice, formatPrice } from "../utils/price";
+
+type FieldName =
+    | "fullName"
+    | "email"
+    | "address"
+    | "city"
+    | "postalCode";
+
+type FieldErrors = Partial<Record<FieldName, string>>;
 
 export default function Checkout() {
     const {
@@ -27,11 +36,25 @@ export default function Checkout() {
     const [address, setAddress] = useState("");
     const [city, setCity] = useState("");
     const [postalCode, setPostalCode] = useState("");
+
+    const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
     const [error, setError] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [placedOrder, setPlacedOrder] = useState<Order | null>(null);
 
     const submittingRef = useRef(false);
+
+    function clearFieldError(field: FieldName) {
+        setFieldErrors((previous) => {
+            if (!previous[field]) {
+                return previous;
+            }
+
+            const next = { ...previous };
+            delete next[field];
+            return next;
+        });
+    }
 
     function handleSubmit(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
@@ -41,20 +64,43 @@ export default function Checkout() {
         }
 
         setError("");
+        setFieldErrors({});
 
         if (items.length === 0) {
             setError("Your cart is empty.");
             return;
         }
 
+        const errors: FieldErrors = {};
+
+        if (fullName.trim().length < 3) {
+            errors.fullName =
+                "Full name must be at least 3 characters";
+        }
+
         if (
-            !fullName.trim() ||
-            !email.trim() ||
-            !address.trim() ||
-            !city.trim() ||
-            !postalCode.trim()
+            !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())
         ) {
-            setError("Please fill in all fields.");
+            errors.email =
+                "Please enter a valid email address";
+        }
+
+        if (address.trim().length < 5) {
+            errors.address =
+                "Address must be at least 5 characters";
+        }
+
+        if (!city.trim()) {
+            errors.city = "City is required";
+        }
+
+        if (!/^\d{4,10}$/.test(postalCode.trim())) {
+            errors.postalCode =
+                "Postal code must be 4-10 digits";
+        }
+
+        if (Object.keys(errors).length > 0) {
+            setFieldErrors(errors);
             return;
         }
 
@@ -158,20 +204,7 @@ export default function Checkout() {
     }
 
     if (items.length === 0) {
-        return (
-            <main className="mx-auto max-w-2xl px-6 py-12 text-center">
-                <h1 className="mb-4 text-3xl font-bold">
-                    Your cart is empty
-                </h1>
-
-                <Link
-                    to="/products"
-                    className="text-indigo-600 hover:underline"
-                >
-                    Browse Products
-                </Link>
-            </main>
-        );
+        return <Navigate to="/cart" replace />;
     }
 
     return (
@@ -199,10 +232,9 @@ export default function Checkout() {
 
                         const lineTotal =
                             Math.round(
-                                (
-                                    unitPrice * quantity +
-                                    Number.EPSILON
-                                ) * 100
+                                (unitPrice * quantity +
+                                    Number.EPSILON) *
+                                100
                             ) / 100;
 
                         return (
@@ -232,9 +264,7 @@ export default function Checkout() {
                             <span className="text-slate-600">
                                 Subtotal
                             </span>
-                            <span>
-                                {formatPrice(subtotal)}
-                            </span>
+                            <span>{formatPrice(subtotal)}</span>
                         </div>
 
                         {promoCode && (
@@ -261,9 +291,7 @@ export default function Checkout() {
 
                         <div className="flex justify-between border-t border-slate-200 pt-4 text-xl font-bold">
                             <span>Total</span>
-                            <span>
-                                {formatPrice(totalPrice)}
-                            </span>
+                            <span>{formatPrice(totalPrice)}</span>
                         </div>
                     </div>
 
@@ -276,6 +304,7 @@ export default function Checkout() {
 
             <form
                 onSubmit={handleSubmit}
+                noValidate
                 className="space-y-5 rounded-xl bg-white p-6 shadow-sm"
             >
                 <h2 className="text-xl font-semibold">
@@ -293,12 +322,29 @@ export default function Checkout() {
                         id="fullName"
                         type="text"
                         value={fullName}
-                        onChange={(event) =>
-                            setFullName(event.target.value)
-                        }
+                        onChange={(event) => {
+                            setFullName(event.target.value);
+                            clearFieldError("fullName");
+                        }}
                         required
+                        minLength={3}
+                        aria-invalid={Boolean(fieldErrors.fullName)}
+                        aria-describedby={
+                            fieldErrors.fullName
+                                ? "fullName-error"
+                                : undefined
+                        }
                         className="w-full rounded-lg border border-slate-300 p-3"
                     />
+                    {fieldErrors.fullName && (
+                        <p
+                            id="fullName-error"
+                            role="alert"
+                            className="mt-1 text-sm text-red-600"
+                        >
+                            {fieldErrors.fullName}
+                        </p>
+                    )}
                 </div>
 
                 <div>
@@ -312,12 +358,28 @@ export default function Checkout() {
                         id="email"
                         type="email"
                         value={email}
-                        onChange={(event) =>
-                            setEmail(event.target.value)
-                        }
+                        onChange={(event) => {
+                            setEmail(event.target.value);
+                            clearFieldError("email");
+                        }}
                         required
+                        aria-invalid={Boolean(fieldErrors.email)}
+                        aria-describedby={
+                            fieldErrors.email
+                                ? "email-error"
+                                : undefined
+                        }
                         className="w-full rounded-lg border border-slate-300 p-3"
                     />
+                    {fieldErrors.email && (
+                        <p
+                            id="email-error"
+                            role="alert"
+                            className="mt-1 text-sm text-red-600"
+                        >
+                            {fieldErrors.email}
+                        </p>
+                    )}
                 </div>
 
                 <div>
@@ -331,12 +393,29 @@ export default function Checkout() {
                         id="address"
                         type="text"
                         value={address}
-                        onChange={(event) =>
-                            setAddress(event.target.value)
-                        }
+                        onChange={(event) => {
+                            setAddress(event.target.value);
+                            clearFieldError("address");
+                        }}
                         required
+                        minLength={5}
+                        aria-invalid={Boolean(fieldErrors.address)}
+                        aria-describedby={
+                            fieldErrors.address
+                                ? "address-error"
+                                : undefined
+                        }
                         className="w-full rounded-lg border border-slate-300 p-3"
                     />
+                    {fieldErrors.address && (
+                        <p
+                            id="address-error"
+                            role="alert"
+                            className="mt-1 text-sm text-red-600"
+                        >
+                            {fieldErrors.address}
+                        </p>
+                    )}
                 </div>
 
                 <div>
@@ -350,12 +429,28 @@ export default function Checkout() {
                         id="city"
                         type="text"
                         value={city}
-                        onChange={(event) =>
-                            setCity(event.target.value)
-                        }
+                        onChange={(event) => {
+                            setCity(event.target.value);
+                            clearFieldError("city");
+                        }}
                         required
+                        aria-invalid={Boolean(fieldErrors.city)}
+                        aria-describedby={
+                            fieldErrors.city
+                                ? "city-error"
+                                : undefined
+                        }
                         className="w-full rounded-lg border border-slate-300 p-3"
                     />
+                    {fieldErrors.city && (
+                        <p
+                            id="city-error"
+                            role="alert"
+                            className="mt-1 text-sm text-red-600"
+                        >
+                            {fieldErrors.city}
+                        </p>
+                    )}
                 </div>
 
                 <div>
@@ -368,13 +463,30 @@ export default function Checkout() {
                     <input
                         id="postalCode"
                         type="text"
+                        inputMode="numeric"
                         value={postalCode}
-                        onChange={(event) =>
-                            setPostalCode(event.target.value)
-                        }
+                        onChange={(event) => {
+                            setPostalCode(event.target.value);
+                            clearFieldError("postalCode");
+                        }}
                         required
+                        aria-invalid={Boolean(fieldErrors.postalCode)}
+                        aria-describedby={
+                            fieldErrors.postalCode
+                                ? "postalCode-error"
+                                : undefined
+                        }
                         className="w-full rounded-lg border border-slate-300 p-3"
                     />
+                    {fieldErrors.postalCode && (
+                        <p
+                            id="postalCode-error"
+                            role="alert"
+                            className="mt-1 text-sm text-red-600"
+                        >
+                            {fieldErrors.postalCode}
+                        </p>
+                    )}
                 </div>
 
                 {error && (
