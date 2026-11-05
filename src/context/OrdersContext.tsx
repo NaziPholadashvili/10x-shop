@@ -1,4 +1,3 @@
-
 import { useState, type ReactNode } from "react";
 import type { Order } from "../types/order";
 import { OrdersContext } from "./orders-context";
@@ -124,7 +123,7 @@ export function OrdersProvider({
 }) {
     const [orders, setOrders] = useState<Order[]>(loadOrders);
 
-    function addOrder(order: Order): boolean {
+    function addOrder(order: Order): Order | null {
         const newOrder: Order = {
             ...order,
             number: getNextOrderNumber(orders),
@@ -139,10 +138,10 @@ export function OrdersProvider({
             );
 
             setOrders(updatedOrders);
-            return true;
+            return newOrder;
         } catch (error) {
             console.error("Failed to save order:", error);
-            return false;
+            return null;
         }
     }
 

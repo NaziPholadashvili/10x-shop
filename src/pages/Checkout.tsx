@@ -148,9 +148,9 @@ export default function Checkout() {
                 status: "placed",
             };
 
-            const saved = addOrder(newOrder);
+            const savedOrder = addOrder(newOrder);
 
-            if (!saved) {
+            if (!savedOrder) {
                 setError(
                     "Failed to save your order. Please try again."
                 );
@@ -158,7 +158,7 @@ export default function Checkout() {
             }
 
             clearCart();
-            setPlacedOrder(newOrder);
+            setPlacedOrder(savedOrder);
         } catch {
             setError(
                 "Something went wrong. Please try again."
@@ -178,6 +178,12 @@ export default function Checkout() {
 
                 <p className="mb-4 text-slate-600">
                     Your order was placed successfully.
+                </p>
+
+                <p className="mb-4 text-lg font-semibold text-slate-900">
+                    Order Number: #
+                    {placedOrder.number ??
+                        placedOrder.id.slice(0, 8)}
                 </p>
 
                 <p className="mb-6 text-2xl font-bold text-slate-900">

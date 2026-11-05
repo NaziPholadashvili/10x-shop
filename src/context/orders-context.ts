@@ -1,10 +1,9 @@
-
 import { createContext } from "react";
 import type { Order } from "../types/order";
 
 export interface OrdersContextType {
     orders: Order[];
-    addOrder: (order: Order) => boolean;
+    addOrder: (order: Order) => Order | null;
 }
 
 export const OrdersContext = createContext<
