@@ -169,7 +169,45 @@ Planned activities:
 11. Testing and debugging
 12. Documentation, deployment, and demonstration
 
-## 5. Risks and Mitigation
+## 5. Work Breakdown Structure (WBS) and Time Estimates
+
+The project is divided into smaller work packages to support planning, prioritization, implementation, testing, and delivery.
+
+The estimated total effort is approximately 100 hours.
+
+These estimates represent an approximate project workload for planning purposes, not an exact record of time already spent.
+
+This detailed WBS was added during documentation refinement after the original project plan was created.
+
+| ID | Work Package | Estimated Hours |
+|---|---|---:|
+| WBS-01 | Project setup, Vite, TypeScript, Tailwind CSS, and Git configuration | 5 |
+| WBS-02 | React Router, shared layout, header, footer, and navigation | 6 |
+| WBS-03 | DummyJSON API integration and product catalog | 8 |
+| WBS-04 | Product details, gallery, reviews, and related products | 8 |
+| WBS-05 | Authentication, protected routes, and user profile | 6 |
+| WBS-06 | Shopping cart, reducer, stock validation, and persistence | 9 |
+| WBS-07 | Promotional discounts, pricing, and shipping calculations | 5 |
+| WBS-08 | Checkout validation, order creation, and order history | 9 |
+| WBS-09 | Catalog search, filtering, sorting, pagination, and URL state | 9 |
+| WBS-10 | Error handling, retry functionality, and responsive improvements | 6 |
+| WBS-11 | TypeScript, ESLint, build checks, debugging, and manual testing | 8 |
+| WBS-12 | Vercel deployment and production verification | 4 |
+| WBS-13 | README, PLAN, REPORT, DEBUG-LOG, and weekly progress notes | 7 |
+| WBS-14 | GitHub Issues, Pull Requests, and project workflow documentation | 5 |
+| WBS-15 | Demo video and oral defense preparation | 5 |
+| | **Total Estimated Effort** | **100** |
+
+### WBS Planning Notes
+
+- CORE requirements are prioritized before additional FULL features.
+- Tasks may overlap because testing, debugging, and documentation take place throughout development.
+- The estimates are approximate and may change depending on technical complexity and unexpected issues.
+- The workload includes implementation, testing, debugging, documentation, GitHub workflows, deployment, and presentation preparation.
+- Actual development progress and completed work are documented separately in `REPORT.md` and the weekly progress notes.
+- The WBS is a planning estimate and should not be interpreted as a timesheet.
+
+## 6. Risks and Mitigation
 
 | Risk | Mitigation |
 |---|---|
@@ -183,7 +221,7 @@ Planned activities:
 | Limited development time | Prioritize CORE requirements before additional FULL features |
 | Regression after changes | Use feature branches, Pull Requests, and repeat verification checks |
 
-## 6. Testing Strategy
+## 7. Testing Strategy
 
 Testing will include:
 
@@ -204,7 +242,64 @@ Testing will include:
 
 Debugging observations will be recorded in `DEBUG-LOG.md`.
 
-## 7. Git and GitHub Workflow
+## 8. Definition of Done (DoD)
+
+Definition of Done describes the criteria that must be satisfied before a development task or project deliverable is considered complete.
+
+### 8.1 Functional Requirements
+
+- The implementation matches the relevant project requirement.
+- The expected user flow works correctly.
+- Required input validation is implemented.
+- Loading, empty, error, and success states are handled where applicable.
+- Existing functionality is not unintentionally broken.
+
+### 8.2 Code Quality
+
+- TypeScript checks pass without errors.
+- ESLint checks pass.
+- The production build completes successfully.
+- Code follows the established project structure and naming conventions.
+- Reusable logic and components are used where appropriate.
+
+### 8.3 Testing and Verification
+
+- The functionality is manually tested in the browser.
+- Relevant edge cases are checked.
+- API failures and recovery behavior are tested where applicable.
+- Cart, authentication, and order persistence are verified where applicable.
+- Responsive behavior is checked for UI-related changes.
+
+### 8.4 Git and Documentation
+
+- Work is tracked through a GitHub Issue where applicable.
+- Feature and fix changes use meaningful commit messages.
+- Pull Requests describe what changed, why it changed, and how to test it.
+- Relevant documentation is updated.
+- Significant debugging findings are recorded in `DEBUG-LOG.md`.
+
+### 8.5 Integration and Delivery
+
+- Required automated checks pass before merging.
+- Changes are merged into the `main` branch.
+- The local `main` branch is synchronized with the remote repository.
+- Production behavior is verified when changes affect the deployed application.
+
+### 8.6 Project-Level Completion
+
+The project is considered ready for final submission when:
+
+- Required CORE functionality is implemented and verified.
+- Targeted FULL functionality is implemented or remaining limitations are documented.
+- The application is deployed and accessible.
+- README, PLAN, REPORT, DEBUG-LOG, and weekly progress notes are available.
+- Required GitHub workflow evidence is available.
+- The demo video is recorded and accessible.
+- The project is ready for oral defense.
+
+These criteria describe the expected completion standard and do not imply that every deliverable has already been completed.
+
+## 9. Git and GitHub Workflow
 
 The development workflow will use:
 
@@ -219,7 +314,7 @@ The development workflow will use:
 
 The project will aim to satisfy the FULL evaluation criteria for commit history, development days, and merged Pull Requests.
 
-## 8. Deliverables
+## 10. Deliverables
 
 - GitHub repository with meaningful commit history
 - GitHub Issues and merged Pull Requests
@@ -235,7 +330,7 @@ The project will aim to satisfy the FULL evaluation criteria for commit history,
 - Demo video
 - Final project presentation and oral defense
 
-## 9. Deadline
+## 11. Deadline
 
 **November 6, 2026 — 23:59**
 
