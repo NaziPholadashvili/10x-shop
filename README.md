@@ -9,7 +9,7 @@
 
 The application allows users to browse products, search and filter the catalog, view product details and reviews, manage a shopping cart, log in using demo authentication, apply promotional discounts, and place demo orders.
 
-Product data is retrieved from the DummyJSON API. Authentication state, cart contents, promotional codes, product reviews, profile information, and order history are stored locally in the browser using localStorage.
+Product data is retrieved from the DummyJSON REST API. Demo authentication, cart contents, promotional codes, product reviews, profile information, and order history are managed on the client side, with relevant data persisted in browser localStorage.
 
 ## Technologies
 
@@ -19,7 +19,7 @@ Product data is retrieved from the DummyJSON API. Authentication state, cart con
 - Tailwind CSS 4
 - React Router 7
 - React Context API
-- React Hooks, including useReducer
+- React Hooks, including `useReducer`
 - DummyJSON REST API
 - Browser localStorage
 - ESLint
@@ -41,7 +41,7 @@ Product data is retrieved from the DummyJSON API. Authentication state, cart con
 - Discounted product prices
 - Loading skeletons
 - Error handling and retry functionality
-- Request cancellation using AbortController
+- Request cancellation using `AbortController`
 
 ### Product Details
 
@@ -178,6 +178,83 @@ Catalog requests use:
 The API URL builder prioritizes search over category filtering when both parameters are provided.
 
 The application handles loading states, unsuccessful HTTP responses, network failures, and request cancellation.
+
+## Data Flow
+
+10X Shop uses a client-side data flow built around API functions, React components, React Context, reducer-based state management, and browser localStorage.
+
+### 1. Product Data Flow
+
+1. A user opens the catalog or selects a product.
+2. The relevant React page initiates a request through the product API functions.
+3. The API functions communicate with DummyJSON using the Fetch API.
+4. The response is processed and the product data is stored in the relevant component state.
+5. React renders the product cards or product details using the received data.
+6. When the user changes search, category, sorting, or pagination options, the catalog updates its state and retrieves the appropriate results.
+
+The catalog uses URL search parameters to preserve filter and pagination state. Debouncing reduces unnecessary search requests, while `AbortController` helps cancel outdated requests.
+
+**Product data flow:**
+
+`User interaction → React page → Product API functions → DummyJSON API → React state → UI`
+
+### 2. Authentication Data Flow
+
+1. The user enters a username and password on the Login page.
+2. The form validates the required fields and password length.
+3. The login action updates the authentication state through AuthContext.
+4. The demo username is persisted in localStorage.
+5. ProtectedRoute checks authentication state before rendering protected pages.
+6. Logging out clears the demo authentication session.
+
+**Authentication data flow:**
+
+`Login form → Validation → AuthContext → Authentication state → Protected routes`
+
+Authentication is simulated locally and does not use a backend authentication service.
+
+### 3. Shopping Cart Data Flow
+
+1. The user selects a product and quantity on the product details page.
+2. Clicking Add to Cart calls the cart action provided by CartContext.
+3. The cart reducer processes the action and updates the shared cart state.
+4. React components using the cart context receive the updated state.
+5. Cart calculations determine the subtotal, promotional discount, shipping cost, and final total.
+6. Relevant cart data is persisted in localStorage.
+7. Saved cart data is restored when the application loads again.
+
+The Cart class centralizes pricing calculations, while the reducer manages cart state changes.
+
+**Shopping cart data flow:**
+
+`Product Details → CartContext → Reducer → Updated cart state → Cart calculations → UI and localStorage`
+
+### 4. Checkout and Orders Data Flow
+
+1. An authenticated user opens the Checkout page.
+2. The checkout form validates the required shipping information.
+3. The application reads the current cart items and calculated totals.
+4. After successful validation, a demo order is created.
+5. The order is saved through the order management logic.
+6. Order history is persisted in localStorage.
+7. The user can view the saved order in Order History and Order Details.
+8. After successful order creation, the cart is cleared.
+
+**Checkout data flow:**
+
+`Cart state → Checkout validation → Order creation → OrdersContext → localStorage → Order History and Order Details`
+
+Orders are stored locally and are not submitted to a real payment or order-processing backend.
+
+### 5. Persistence and Error Handling
+
+Browser localStorage is used to retain relevant demo data between page refreshes, including authentication state, cart contents, promotional codes, orders, reviews, and profile information.
+
+Stored data is read and restored by the relevant application logic. The project uses validation and type guards for supported persisted data structures to reduce the risk of using invalid stored values.
+
+API requests are handled separately from local persistence. Network errors are displayed through component error states, and the catalog provides a Retry action.
+
+React Error Boundary provides fallback UI for supported rendering errors.
 
 ## Getting Started
 
