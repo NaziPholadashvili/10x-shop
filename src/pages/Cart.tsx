@@ -221,7 +221,7 @@ export default function Cart() {
                         to="/products"
                         className="font-semibold text-indigo-600"
                     >
-                        Browse Products
+                        Browse products
                     </Link>
                 </div>
             ) : (
@@ -374,7 +374,7 @@ export default function Cart() {
                                 to="/checkout"
                                 className="inline-block rounded-lg bg-indigo-600 px-6 py-3 font-semibold text-white hover:bg-indigo-700"
                             >
-                                Proceed to Checkout
+                                Proceed to checkout
                             </Link>
                         </div>
                     </section>
