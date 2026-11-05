@@ -39,7 +39,7 @@ export default function Orders() {
             {userOrders.length === 0 ? (
                 <div className="rounded-xl bg-white p-8 text-center shadow-sm">
                     <p className="mb-6 text-slate-600">
-                        You have not placed any orders yet.
+                        You have no orders yet.
                     </p>
 
                     <Link

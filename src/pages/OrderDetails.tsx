@@ -7,6 +7,7 @@ import { useOrders } from "../context/useOrders";
 import { getOrderStatus } from "../utils/orderStatus";
 import { formatPrice } from "../utils/price";
 import type { OrderStatus } from "../types/order";
+import NotFound from "./NotFound";
 
 const statusSteps: OrderStatus[] = [
     "Processing",
@@ -54,25 +55,7 @@ export default function OrderDetails() {
     }
 
     if (!order) {
-        return (
-            <main className="mx-auto max-w-4xl px-6 py-12">
-                <h1 className="mb-4 text-3xl font-bold text-slate-900">
-                    Order Not Found
-                </h1>
-
-                <p className="mb-6 text-slate-600">
-                    This order does not exist or is not available
-                    for your account.
-                </p>
-
-                <Link
-                    to="/orders"
-                    className="font-semibold text-indigo-600 hover:underline"
-                >
-                    Back to My Orders
-                </Link>
-            </main>
-        );
+        return <NotFound />;
     }
 
     const status = getOrderStatus(order.createdAt, currentTime);
