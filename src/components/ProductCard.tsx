@@ -9,7 +9,20 @@ interface ProductCardProps {
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
-    const { addToCart } = useCart();
+    const { items, addToCart } = useCart();
+
+    const cartItem = items.find(
+        (item) => item.product.id === product.id
+    );
+
+    const cartQuantity = cartItem?.quantity ?? 0;
+
+    const availableStock = Math.max(
+        0,
+        product.stock - cartQuantity
+    );
+
+    const isOutOfStock = availableStock === 0;
 
     const hasDiscount = product.discountPercentage >= 1;
     const finalPrice = hasDiscount
@@ -60,11 +73,11 @@ export default function ProductCard({ product }: ProductCardProps) {
                 </p>
 
                 <p className="mt-2 text-sm font-medium">
-                    {product.stock === 0 ? (
-                        <span className="text-red-600">Out of stock</span>
-                    ) : product.stock <= 5 ? (
+                    {isOutOfStock ? (
+                        <span className="text-red-600">Out of Stock</span>
+                    ) : availableStock <= 5 ? (
                         <span className="text-orange-600">
-                            Only {product.stock} left!
+                            Only {availableStock} left!
                         </span>
                     ) : (
                         <span className="text-green-700">In stock</span>
@@ -75,10 +88,10 @@ export default function ProductCard({ product }: ProductCardProps) {
             <button
                 type="button"
                 onClick={() => addToCart(product)}
-                disabled={product.stock < 1}
+                disabled={isOutOfStock}
                 className="mt-4 w-full rounded-lg bg-indigo-600 px-4 py-2 font-semibold text-white hover:bg-indigo-700 disabled:cursor-not-allowed disabled:bg-slate-400"
             >
-                {product.stock < 1 ? "Out of Stock" : "Add to Cart"}
+                {isOutOfStock ? "Out of Stock" : "Add to Cart"}
             </button>
         </article>
     );
