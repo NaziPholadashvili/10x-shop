@@ -189,7 +189,7 @@ Authentication and checkout are simulated. No real payment processing or backend
 
 The following development issues were documented in `DEBUG-LOG.md`.
 
-### Issue 1 — Add to Cart Button Did Not Work
+### 5.1 Issue 1 — Add to Cart Button Did Not Work
 
 **Problem:** The Add to Cart button initially did not update the shopping cart.
 
@@ -197,7 +197,7 @@ The following development issues were documented in `DEBUG-LOG.md`.
 
 **Verification:** Added products to the cart and confirmed that cart contents and totals updated correctly.
 
-### Issue 2 — API Error Messages Were Too Generic
+### 5.2 Issue 2 — API Error Messages Were Too Generic
 
 **Problem:** API errors did not provide the HTTP response status.
 
@@ -205,7 +205,7 @@ The following development issues were documented in `DEBUG-LOG.md`.
 
 **Verification:** Confirmed that the updated code passed the production build.
 
-### Issue 3 — Product Loading Failure Had No Retry Option
+### 5.3 Issue 3 — Product Loading Failure Had No Retry Option
 
 **Problem:** When a product API request failed, the page displayed an error without providing a retry action.
 
@@ -221,7 +221,7 @@ The following development issues were documented in `DEBUG-LOG.md`.
 
 This verified both the failure state and recovery behavior.
 
-### Issue 4 — Error Boundary Testing
+### 5.4 Issue 4 — Error Boundary Testing
 
 **Problem:** Unexpected React rendering errors required a fallback interface.
 
@@ -229,7 +229,7 @@ This verified both the failure state and recovery behavior.
 
 **Verification:** Temporarily triggered a rendering error, confirmed the fallback interface appeared, removed the test error, and verified that the application built successfully.
 
-### 5.1 Additional Development Challenges
+### 5.5 Additional Development Challenges
 
 Other technical improvements included:
 
@@ -338,7 +338,76 @@ The following command was also used during the final review:
 npx tsc --noEmit
 ```
 
-### 6.6 Remaining Verification
+### 6.6 Lighthouse Performance Audit
+
+A Lighthouse audit was performed on November 5, 2026, using Chrome DevTools against the deployed Vercel application.
+
+**Audited URL:** https://10x-shop-flax.vercel.app/
+
+**Audit environment:**
+
+- Tool: Chrome DevTools Lighthouse
+- Audit type: Navigation
+- Device mode: Mobile
+- Emulated viewport: 390 × 844
+- Target: Production deployment on Vercel
+
+**Lighthouse scores:**
+
+| Category | Score | Interpretation |
+|---|---:|---|
+| Performance | 94/100 | Good |
+| Accessibility | 95/100 | Good |
+| Best Practices | 100/100 | Good |
+| SEO | 83/100 | Needs improvement |
+
+The audit showed strong results for performance, accessibility, and best practices.
+
+The SEO score was lower than the other categories and remains a potential area for further improvement.
+
+Lighthouse scores are estimates and may vary between runs due to environmental conditions, network behavior, and page state.
+
+These results represent one recorded mobile audit rather than a guarantee of identical performance for every user or route.
+
+### 6.7 Production Bundle Metrics
+
+Production bundle measurements were collected on November 5, 2026, using the following command:
+
+```bash
+npm run build
+```
+
+The command runs TypeScript project checks followed by the Vite production build:
+
+```bash
+tsc -b && vite build
+```
+
+**Build environment and result:**
+
+- Build tool: Vite 8.3.4
+- Modules transformed: 57
+- Build status: Successful
+- Reported build time: 314 ms
+
+**Generated production assets:**
+
+| Asset | Uncompressed Size | Gzip Size |
+|---|---:|---:|
+| `dist/index.html` | 0.45 kB | 0.29 kB |
+| `dist/assets/index-BGQUz_BJ.css` | 22.23 kB | 5.07 kB |
+| `dist/assets/index-B24A6GEc.js` | 318.73 kB | 95.31 kB |
+| **Total** | **341.41 kB** | **100.67 kB** |
+
+These values were reported by Vite during the production build.
+
+The JavaScript bundle is the largest generated asset in this build.
+
+The gzip figures represent compressed asset sizes and should not be interpreted as a complete measurement of network transfer, API responses, images, or runtime memory usage.
+
+Bundle sizes may change when application code, dependencies, or build configuration are updated.
+
+### 6.8 Remaining Verification
 
 - Final cross-page functional review
 - Final responsive review across key layouts
@@ -358,10 +427,10 @@ Some early features were committed directly to `main`. Later development increas
 As of November 5, 2026:
 
 | Metric | Result |
-|---|---|
-| Git commits | 69 |
+|---|---:|
+| Git commits | 75 |
 | Distinct commit dates | 17 |
-| Merged Pull Requests | 18 |
+| Merged Pull Requests | 21 |
 
 The project has exceeded the quantitative FULL-level development targets:
 
@@ -369,11 +438,11 @@ The project has exceeded the quantitative FULL-level development targets:
 - At least 15 distinct commit dates
 - At least 8 merged Pull Requests
 
-The commit-day count was verified using Git history on the `main` branch.
+The 17 distinct commit dates were verified using Git history on the `main` branch, covering October 20 through November 5, 2026.
 
-The merged Pull Request count was verified using GitHub's `is:pr is:merged` filter.
+The commit count and merged Pull Request count were checked against the GitHub repository.
 
-These statistics represent the verified November 5 snapshot and may increase if additional changes are merged.
+These statistics represent the November 5 snapshot and may increase if additional changes are merged.
 
 ### 7.2 GitHub Workflow Examples
 
@@ -397,6 +466,9 @@ Merged Pull Requests include:
 - PR #31 — Login validation and header improvements
 - PR #33 — Checkout validation and empty-cart redirect
 - PR #35 — Product ID validation and Not Found handling
+- PR #37 — Project planning and reporting improvements
+- PR #39 — README Data Flow and Credits
+- PR #41 — PLAN WBS estimates and Definition of Done
 
 The review-related changes were developed using separate branches and GitHub Issues.
 
@@ -441,6 +513,8 @@ Development progress is documented in three weekly reports.
 - Checkout validation improvements
 - Product ID validation and Not Found improvements
 - Final documentation review
+- Lighthouse performance audit
+- Production bundle measurement
 - Demo video and oral defense preparation
 
 Detailed development notes are available in:
@@ -532,13 +606,15 @@ AI assistance did not replace manual testing or verification of application beha
 | React and TypeScript application | Implemented |
 | CORE functionality | Implemented |
 | FULL functionality | Main planned features implemented |
-| PLAN.md | Updated |
-| README.md | Created; final Credits update pending |
+| PLAN.md | Updated with WBS, Risks, and DoD |
+| README.md | Updated with Data Flow and Credits |
 | DEBUG-LOG.md | Created; structured review pending |
-| REPORT.md | Updated during final review |
+| REPORT.md | Updated with Lighthouse and bundle metrics |
 | Weekly progress reports | Created |
 | Live deployed application | Completed |
 | Production verification | Main flows verified |
+| Lighthouse audit | Completed |
+| Production bundle measurement | Completed |
 | Final responsive review | Pending |
 | Demo video | Pending |
 | Oral defense preparation | In progress |
@@ -547,7 +623,7 @@ AI assistance did not replace manual testing or verification of application beha
 
 Before final submission:
 
-1. Complete the documentation review and updates.
+1. Complete the remaining documentation review and updates.
 2. Finalize the structured debugging log.
 3. Perform final functional and responsive regression checks.
 4. Verify that the latest documentation and application changes are merged.
@@ -573,6 +649,8 @@ Developing 10X Shop provided practical experience with:
 - Using Git branches, Issues, Pull Requests, and meaningful commits
 - Deploying and testing a client-side application on Vercel
 - Reviewing evaluation feedback and correcting specific problems
+- Measuring frontend performance using Lighthouse
+- Reviewing production bundle sizes
 
 The project demonstrated the importance of testing changes before committing them, documenting actual technical problems, and understanding implementation decisions rather than relying only on generated code.
 
@@ -584,6 +662,10 @@ The main CORE application features and planned additional functionality have bee
 
 The application is deployed on Vercel, and its main user flows have been manually verified.
 
-As of November 5, 2026, the project has 69 commits, 17 distinct commit dates, and 18 merged Pull Requests, exceeding the quantitative FULL-level development targets.
+The November 5 Lighthouse audit recorded Performance 94, Accessibility 95, Best Practices 100, and SEO 83.
+
+The production build completed successfully, generating approximately 341.41 kB of HTML, CSS, and JavaScript assets before compression and 100.67 kB according to the reported gzip sizes.
+
+As of November 5, 2026, the project has 75 commits, 17 distinct commit dates, and 21 merged Pull Requests, exceeding the quantitative FULL-level development targets.
 
 The final stage focuses on documentation quality, regression testing, demo video preparation, and oral defense readiness.
