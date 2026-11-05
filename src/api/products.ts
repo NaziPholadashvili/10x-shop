@@ -5,7 +5,36 @@ import type {
     CatalogParams,
 } from "../types/product";
 
+import { ApiError, isApiError } from "../errors/ApiError";
+
 const API_URL = "https://dummyjson.com/products";
+
+async function fetchJson<T>(
+    url: string,
+    errorMessage: string,
+    signal?: AbortSignal
+): Promise<T> {
+    try {
+        const response = await fetch(url, { signal });
+
+        if (!response.ok) {
+            throw new ApiError(
+                `${errorMessage} (HTTP ${response.status})`,
+                response.status
+            );
+        }
+
+        return (await response.json()) as T;
+    } catch (error: unknown) {
+        if (isApiError(error)) {
+            // HTTP errors retain their original message and status.
+            throw error;
+        }
+
+        // Preserve AbortError, network errors and other failures.
+        throw error;
+    }
+}
 
 export function buildProductsUrl(
     params: CatalogParams
@@ -69,53 +98,32 @@ export async function getProducts(
     },
     signal?: AbortSignal
 ): Promise<ProductsResponse> {
-    const response = await fetch(
+    return fetchJson<ProductsResponse>(
         buildProductsUrl(params),
-        { signal }
+        "Failed to fetch products",
+        signal
     );
-
-    if (!response.ok) {
-        throw new Error(
-            `Failed to fetch products (HTTP ${response.status})`
-        );
-    }
-
-    return (await response.json()) as ProductsResponse;
 }
 
 export async function getCategories(
     signal?: AbortSignal
 ): Promise<string[]> {
-    const response = await fetch(
+    return fetchJson<string[]>(
         `${API_URL}/category-list`,
-        { signal }
+        "Failed to fetch categories",
+        signal
     );
-
-    if (!response.ok) {
-        throw new Error(
-            `Failed to fetch categories (HTTP ${response.status})`
-        );
-    }
-
-    return (await response.json()) as string[];
 }
 
 export async function getProductById(
     id: string,
     signal?: AbortSignal
 ): Promise<Product> {
-    const response = await fetch(
+    return fetchJson<Product>(
         `${API_URL}/${encodeURIComponent(id)}`,
-        { signal }
+        "Failed to fetch product",
+        signal
     );
-
-    if (!response.ok) {
-        throw new Error(
-            `Failed to fetch product (HTTP ${response.status})`
-        );
-    }
-
-    return (await response.json()) as Product;
 }
 
 export async function getRelatedProducts(
@@ -123,18 +131,11 @@ export async function getRelatedProducts(
     currentProductId: number,
     signal?: AbortSignal
 ): Promise<Product[]> {
-    const response = await fetch(
+    const data = await fetchJson<ProductsResponse>(
         `${API_URL}/category/${encodeURIComponent(category)}?limit=5`,
-        { signal }
+        "Failed to fetch related products",
+        signal
     );
-
-    if (!response.ok) {
-        throw new Error(
-            `Failed to fetch related products (HTTP ${response.status})`
-        );
-    }
-
-    const data = (await response.json()) as ProductsResponse;
 
     return data.products
         .filter((product) => product.id !== currentProductId)
