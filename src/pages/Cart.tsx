@@ -2,11 +2,13 @@
 import { useState, type FormEvent } from "react";
 import { Link } from "react-router-dom";
 import { useCart } from "../context/useCart";
+import { useToast } from "../context/useToast";
 import type { CartItem } from "../context/cart-context";
 import { discountedPrice, formatPrice } from "../utils/price";
 
 function CartProduct({ item }: { item: CartItem }) {
     const { updateQuantity, removeFromCart } = useCart();
+    const { showToast } = useToast();
     const { product, quantity } = item;
 
     const [quantityInput, setQuantityInput] = useState(
@@ -67,6 +69,11 @@ function CartProduct({ item }: { item: CartItem }) {
         updateQuantity(product.id, safeQuantity);
         setQuantityInput(String(safeQuantity));
         setIsEditing(false);
+    }
+
+    function handleRemove() {
+        removeFromCart(product.id);
+        showToast("Product removed from cart.", "success");
     }
 
     return (
@@ -158,7 +165,7 @@ function CartProduct({ item }: { item: CartItem }) {
 
             <button
                 type="button"
-                onClick={() => removeFromCart(product.id)}
+                onClick={handleRemove}
                 className="font-medium text-red-600 hover:underline"
             >
                 Remove
@@ -181,6 +188,8 @@ export default function Cart() {
         totalPrice,
     } = useCart();
 
+    const { showToast } = useToast();
+
     const [promoInput, setPromoInput] = useState("");
     const [promoError, setPromoError] = useState("");
 
@@ -192,10 +201,15 @@ export default function Cart() {
         if (success) {
             setPromoError("");
             setPromoInput("");
+            showToast(
+                "Promo code applied successfully!",
+                "success"
+            );
         } else {
             setPromoError(
                 "Invalid promo code. Please try again."
             );
+            showToast("Invalid promo code.", "error");
         }
     }
 
@@ -203,6 +217,12 @@ export default function Cart() {
         removePromo();
         setPromoInput("");
         setPromoError("");
+        showToast("Promo code removed.", "success");
+    }
+
+    function handleClearCart() {
+        clearCart();
+        showToast("Cart cleared.", "success");
     }
 
     return (
@@ -364,7 +384,7 @@ export default function Cart() {
                         <div className="mt-5 flex flex-wrap items-center gap-4">
                             <button
                                 type="button"
-                                onClick={clearCart}
+                                onClick={handleClearCart}
                                 className="rounded-lg border border-red-500 px-4 py-2 text-red-600 hover:bg-red-50"
                             >
                                 Clear Cart

@@ -5,6 +5,7 @@ import { Link, useParams } from "react-router-dom";
 import { getProductById } from "../api/products";
 import { useCart } from "../context/useCart";
 import { useAuth } from "../context/useAuth";
+import { useToast } from "../context/useToast";
 import RelatedProducts from "../components/RelatedProducts";
 import NotFound from "./NotFound";
 import type { Product, ProductReview } from "../types/product";
@@ -74,6 +75,7 @@ export default function ProductDetails() {
 
     const { addToCart, items } = useCart();
     const { username } = useAuth();
+    const { showToast } = useToast();
 
     const [product, setProduct] = useState<Product | null>(null);
     const [loading, setLoading] = useState(true);
@@ -327,6 +329,8 @@ export default function ProductDetails() {
 
         addToCart(product, safeQuantity);
 
+        showToast("Product added to cart!", "success");
+
         setQuantity(1);
         setQuantityInput("1");
     }
@@ -453,8 +457,8 @@ export default function ProductDetails() {
                                         aria-label={`View product image ${index + 1}`}
                                         aria-pressed={isSelected}
                                         className={`h-20 w-20 overflow-hidden rounded-lg border-2 bg-white p-1 transition ${isSelected
-                                            ? "border-indigo-600 ring-2 ring-indigo-200"
-                                            : "border-slate-200 hover:border-indigo-400"
+                                                ? "border-indigo-600 ring-2 ring-indigo-200"
+                                                : "border-slate-200 hover:border-indigo-400"
                                             }`}
                                     >
                                         <img
@@ -606,8 +610,8 @@ export default function ProductDetails() {
                         aria-controls="product-information-panel"
                         onClick={() => setActiveTab("description")}
                         className={`border-b-2 px-2 py-3 font-semibold ${activeTab === "description"
-                            ? "border-indigo-600 text-indigo-600"
-                            : "border-transparent text-slate-600"
+                                ? "border-indigo-600 text-indigo-600"
+                                : "border-transparent text-slate-600"
                             }`}
                     >
                         Description
@@ -621,8 +625,8 @@ export default function ProductDetails() {
                         aria-controls="product-information-panel"
                         onClick={() => setActiveTab("reviews")}
                         className={`border-b-2 px-2 py-3 font-semibold ${activeTab === "reviews"
-                            ? "border-indigo-600 text-indigo-600"
-                            : "border-transparent text-slate-600"
+                                ? "border-indigo-600 text-indigo-600"
+                                : "border-transparent text-slate-600"
                             }`}
                     >
                         Reviews ({allReviews.length})

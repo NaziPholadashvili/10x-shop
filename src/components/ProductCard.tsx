@@ -1,6 +1,7 @@
 
 import { Link } from "react-router-dom";
 import { useCart } from "../context/useCart";
+import { useToast } from "../context/useToast";
 import type { Product } from "../types/product";
 import { discountedPrice, formatPrice } from "../utils/price";
 
@@ -10,6 +11,7 @@ interface ProductCardProps {
 
 export default function ProductCard({ product }: ProductCardProps) {
     const { items, addToCart } = useCart();
+    const { showToast } = useToast();
 
     const cartItem = items.find(
         (item) => item.product.id === product.id
@@ -25,9 +27,20 @@ export default function ProductCard({ product }: ProductCardProps) {
     const isOutOfStock = availableStock === 0;
 
     const hasDiscount = product.discountPercentage >= 1;
+
     const finalPrice = hasDiscount
         ? discountedPrice(product.price, product.discountPercentage)
         : product.price;
+
+    function handleAddToCart() {
+        if (isOutOfStock) {
+            return;
+        }
+
+        addToCart(product);
+
+        showToast("Product added to cart!", "success");
+    }
 
     return (
         <article className="rounded-xl bg-white p-4 shadow-sm transition hover:shadow-md">
@@ -74,20 +87,24 @@ export default function ProductCard({ product }: ProductCardProps) {
 
                 <p className="mt-2 text-sm font-medium">
                     {isOutOfStock ? (
-                        <span className="text-red-600">Out of Stock</span>
+                        <span className="text-red-600">
+                            Out of Stock
+                        </span>
                     ) : availableStock <= 5 ? (
                         <span className="text-orange-600">
                             Only {availableStock} left!
                         </span>
                     ) : (
-                        <span className="text-green-700">In stock</span>
+                        <span className="text-green-700">
+                            In stock
+                        </span>
                     )}
                 </p>
             </Link>
 
             <button
                 type="button"
-                onClick={() => addToCart(product)}
+                onClick={handleAddToCart}
                 disabled={isOutOfStock}
                 className="mt-4 w-full rounded-lg bg-indigo-600 px-4 py-2 font-semibold text-white hover:bg-indigo-700 disabled:cursor-not-allowed disabled:bg-slate-400"
             >

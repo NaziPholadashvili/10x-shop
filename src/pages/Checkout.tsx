@@ -4,6 +4,7 @@ import { Link, Navigate } from "react-router-dom";
 import { useCart } from "../context/useCart";
 import { useAuth } from "../context/useAuth";
 import { useOrders } from "../context/useOrders";
+import { useToast } from "../context/useToast";
 import type { Order } from "../types/order";
 import { discountedPrice, formatPrice } from "../utils/price";
 
@@ -30,6 +31,7 @@ export default function Checkout() {
 
     const { username } = useAuth();
     const { addOrder } = useOrders();
+    const { showToast } = useToast();
 
     const [fullName, setFullName] = useState("");
     const [email, setEmail] = useState("");
@@ -78,9 +80,7 @@ export default function Checkout() {
                 "Full name must be at least 3 characters";
         }
 
-        if (
-            !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())
-        ) {
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
             errors.email =
                 "Please enter a valid email address";
         }
@@ -154,14 +154,27 @@ export default function Checkout() {
                 setError(
                     "Failed to save your order. Please try again."
                 );
+                showToast(
+                    "Failed to save your order.",
+                    "error"
+                );
                 return;
             }
 
             clearCart();
             setPlacedOrder(savedOrder);
+
+            showToast(
+                "Order placed successfully!",
+                "success"
+            );
         } catch {
             setError(
                 "Something went wrong. Please try again."
+            );
+            showToast(
+                "Something went wrong. Please try again.",
+                "error"
             );
         } finally {
             submittingRef.current = false;
