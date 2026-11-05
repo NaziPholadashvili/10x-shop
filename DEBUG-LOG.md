@@ -131,9 +131,9 @@ This made error messages more informative and easier to investigate.
 1. Reviewed the updated API error-handling implementation.
 2. Ran the production build:
 
-```bash
-npm run build
-```
+   ```bash
+   npm run build
+   ```
 
 3. Confirmed that the build completed successfully.
 
@@ -233,7 +233,7 @@ Unexpected React rendering errors required a fallback interface so that users wo
 2. Temporarily introduce a rendering error in a component covered by the Error Boundary.
 3. Open the affected application page.
 4. Observe the resulting rendering error.
-5. Verify that the Error Boundary displays its fallback interface.
+5. Verify that the Error Boundary fallback interface appears.
 
 ### Tools Used
 
@@ -287,7 +287,7 @@ Relevant files:
 | Entry | Verification Method | Result | Main Commit |
 |---|---|---|---|
 | Add to Cart | Manual cart interaction | Passed | `ae99477` |
-| API error messages | Code review and production build | Passed | `1a64203` |
+| API error messages | Code review and production build | Build passed | `1a64203` |
 | Retry functionality | Chrome DevTools request blocking and recovery | Passed | `3d235ee` |
 | Error Boundary | Temporary rendering error and fallback verification | Passed | `6319197` |
 
