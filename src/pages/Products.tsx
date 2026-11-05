@@ -2,6 +2,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { getCategories, getProducts } from "../api/products";
+import { isApiError } from "../errors/ApiError";
 import type {
     Product,
     CatalogSortOption,
@@ -150,9 +151,14 @@ export default function Products() {
                     setError(null);
                     setLoading(false);
                 }
-            } catch {
+            } catch (error: unknown) {
                 if (!controller.signal.aborted) {
-                    setError("Failed to load products.");
+                    if (isApiError(error)) {
+                        setError(error.message);
+                    } else {
+                        setError("Failed to load products.");
+                    }
+
                     setLoading(false);
                 }
             }
