@@ -9,6 +9,7 @@ import type {
 } from "../types/product";
 import ProductCard from "../components/ProductCard";
 import ProductCardSkeleton from "../components/ProductCardSkeleton";
+import { useDebounce } from "../hooks/useDebounce";
 
 const PAGE_SIZE = 12;
 
@@ -31,19 +32,19 @@ function SearchField({
 }: SearchFieldProps) {
     const [value, setValue] = useState(initialValue);
 
+    const debouncedValue = useDebounce(value, 400);
+
     useEffect(() => {
-        if (value === initialValue) {
+        if (value !== debouncedValue) {
             return;
         }
 
-        const timeoutId = window.setTimeout(() => {
-            onSearch(value.trim());
-        }, 400);
+        const trimmedValue = debouncedValue.trim();
 
-        return () => {
-            window.clearTimeout(timeoutId);
-        };
-    }, [value, initialValue, onSearch]);
+        if (trimmedValue !== initialValue) {
+            onSearch(trimmedValue);
+        }
+    }, [value, debouncedValue, initialValue, onSearch]);
 
     return (
         <div>
