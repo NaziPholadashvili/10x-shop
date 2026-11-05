@@ -227,7 +227,7 @@ export default function ProductDetails() {
                     to="/products"
                     className="mt-4 inline-block text-indigo-600"
                 >
-                    Back to Products
+                    ← Back to catalog
                 </Link>
             </main>
         );
@@ -414,7 +414,7 @@ export default function ProductDetails() {
                 to="/products"
                 className="text-indigo-600 hover:underline"
             >
-                ← Back to Products
+                ← Back to catalog
             </Link>
 
             <div className="mt-8 grid gap-10 md:grid-cols-2">
@@ -453,8 +453,8 @@ export default function ProductDetails() {
                                         aria-label={`View product image ${index + 1}`}
                                         aria-pressed={isSelected}
                                         className={`h-20 w-20 overflow-hidden rounded-lg border-2 bg-white p-1 transition ${isSelected
-                                                ? "border-indigo-600 ring-2 ring-indigo-200"
-                                                : "border-slate-200 hover:border-indigo-400"
+                                            ? "border-indigo-600 ring-2 ring-indigo-200"
+                                            : "border-slate-200 hover:border-indigo-400"
                                             }`}
                                     >
                                         <img
@@ -606,8 +606,8 @@ export default function ProductDetails() {
                         aria-controls="product-information-panel"
                         onClick={() => setActiveTab("description")}
                         className={`border-b-2 px-2 py-3 font-semibold ${activeTab === "description"
-                                ? "border-indigo-600 text-indigo-600"
-                                : "border-transparent text-slate-600"
+                            ? "border-indigo-600 text-indigo-600"
+                            : "border-transparent text-slate-600"
                             }`}
                     >
                         Description
@@ -621,8 +621,8 @@ export default function ProductDetails() {
                         aria-controls="product-information-panel"
                         onClick={() => setActiveTab("reviews")}
                         className={`border-b-2 px-2 py-3 font-semibold ${activeTab === "reviews"
-                                ? "border-indigo-600 text-indigo-600"
-                                : "border-transparent text-slate-600"
+                            ? "border-indigo-600 text-indigo-600"
+                            : "border-transparent text-slate-600"
                             }`}
                     >
                         Reviews ({allReviews.length})
