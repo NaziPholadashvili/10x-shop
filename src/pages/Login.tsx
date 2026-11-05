@@ -3,10 +3,15 @@ import { useState, type FormEvent } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/useAuth";
 
+type LoginFormErrors = {
+    username?: string;
+    password?: string;
+};
+
 export default function Login() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
-    const [error, setError] = useState("");
+    const [errors, setErrors] = useState<LoginFormErrors>({});
 
     const { login } = useAuth();
     const navigate = useNavigate();
@@ -20,22 +25,25 @@ export default function Login() {
     function handleSubmit(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
 
+        const newErrors: LoginFormErrors = {};
+
         if (!username.trim()) {
-            setError("Username is required");
-            return;
+            newErrors.username = "Username is required";
         }
 
         if (!password.trim()) {
-            setError("Password is required");
+            newErrors.password = "Password is required";
+        } else if (password.length < 6) {
+            newErrors.password =
+                "Password must be at least 6 characters";
+        }
+
+        setErrors(newErrors);
+
+        if (Object.keys(newErrors).length > 0) {
             return;
         }
 
-        if (password.length < 6) {
-            setError("Password must be at least 6 characters");
-            return;
-        }
-
-        setError("");
         login(username.trim());
         navigate(from, { replace: true });
     }
@@ -43,7 +51,7 @@ export default function Login() {
     return (
         <main className="mx-auto max-w-md px-6 py-12">
             <Link
-                to="/products"
+                to="/"
                 className="mb-6 inline-block text-sm font-medium text-indigo-600 hover:underline"
             >
                 ← Back to catalog
@@ -70,12 +78,32 @@ export default function Login() {
                         id="username"
                         type="text"
                         value={username}
-                        onChange={(event) =>
-                            setUsername(event.target.value)
-                        }
+                        onChange={(event) => {
+                            setUsername(event.target.value);
+                            setErrors((prev) => ({
+                                ...prev,
+                                username: undefined,
+                            }));
+                        }}
                         required
+                        aria-invalid={Boolean(errors.username)}
+                        aria-describedby={
+                            errors.username
+                                ? "username-error"
+                                : undefined
+                        }
                         className="w-full rounded-lg border border-slate-300 p-3"
                     />
+
+                    {errors.username && (
+                        <p
+                            id="username-error"
+                            role="alert"
+                            className="mt-1 text-sm text-red-600"
+                        >
+                            {errors.username}
+                        </p>
+                    )}
                 </div>
 
                 <div>
@@ -90,20 +118,34 @@ export default function Login() {
                         id="password"
                         type="password"
                         value={password}
-                        onChange={(event) =>
-                            setPassword(event.target.value)
-                        }
+                        onChange={(event) => {
+                            setPassword(event.target.value);
+                            setErrors((prev) => ({
+                                ...prev,
+                                password: undefined,
+                            }));
+                        }}
                         required
                         minLength={6}
+                        aria-invalid={Boolean(errors.password)}
+                        aria-describedby={
+                            errors.password
+                                ? "password-error"
+                                : undefined
+                        }
                         className="w-full rounded-lg border border-slate-300 p-3"
                     />
-                </div>
 
-                {error && (
-                    <p role="alert" className="text-sm text-red-600">
-                        {error}
-                    </p>
-                )}
+                    {errors.password && (
+                        <p
+                            id="password-error"
+                            role="alert"
+                            className="mt-1 text-sm text-red-600"
+                        >
+                            {errors.password}
+                        </p>
+                    )}
+                </div>
 
                 <button
                     type="submit"
