@@ -1,4 +1,3 @@
-
 import { Component, type ErrorInfo, type ReactNode } from "react";
 
 interface ErrorBoundaryProps {
@@ -32,7 +31,7 @@ class ErrorBoundary extends Component<
             return (
                 <main className="flex min-h-screen flex-col items-center justify-center gap-4 p-6 text-center">
                     <h1 className="text-2xl font-bold">
-                        Something went wrong
+                        Something went wrong.
                     </h1>
 
                     <p className="text-gray-600">
@@ -44,7 +43,7 @@ class ErrorBoundary extends Component<
                         onClick={() => window.location.reload()}
                         className="rounded-lg bg-blue-600 px-5 py-2 text-white hover:bg-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
                     >
-                        Reload page
+                        Reload
                     </button>
                 </main>
             );

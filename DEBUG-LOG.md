@@ -9,13 +9,16 @@ This document records four real development and debugging cases.
 
 Each entry includes:
 
-- Problem
+- Problem (symptom)
 - Reproduction or investigation steps
 - Tools used
 - Root cause or identified limitation
 - Fix
 - Verification
 - Git commit reference
+- Lessons learned
+
+---
 
 ## 1. Add to Cart Button Did Not Work
 
@@ -46,6 +49,8 @@ The product details page needed to be connected to the shared cart state.
 The product details page did not yet have the necessary Add to Cart interaction connected to the shared cart state.
 
 The cart infrastructure was introduced separately from the product details interaction.
+
+As a result, the product details page could display product information, but the Add to Cart interaction was not yet connected to the shared cart state.
 
 ### Fix
 
@@ -87,9 +92,19 @@ The Add to Cart functionality was tested manually.
 
 Relevant files:
 
-- `src/context/CartContext.tsx`
+- `src/contexts/CartContext.tsx`
 - `src/pages/Cart.tsx`
 - `src/pages/ProductDetails.tsx`
+
+### Lessons Learned
+
+I learned that implementing shared cart state is not enough by itself. Components must also be connected to the correct context actions.
+
+I also learned that testing the complete user interaction is important because a button can appear correctly in the interface without performing the expected state update.
+
+Testing the product details page together with the shopping cart helped verify that the selected product and quantity were correctly transferred to the shared cart state.
+
+---
 
 ## 2. API Error Messages Were Too Generic
 
@@ -119,6 +134,8 @@ This made unsuccessful API responses harder to diagnose.
 The original error handling did not include the HTTP status code in the generated error message.
 
 As a result, the message provided limited diagnostic information about unsuccessful HTTP responses.
+
+For example, an HTTP error response could be detected, but the generated message did not clearly indicate its status code.
 
 ### Fix
 
@@ -150,6 +167,18 @@ The recorded verification confirms that the updated code compiled successfully. 
 Relevant file:
 
 - `src/api/products.ts`
+
+### Lessons Learned
+
+I learned that API error messages should include useful diagnostic information, such as the HTTP response status code.
+
+This helps developers distinguish different unsuccessful HTTP responses and investigate problems more effectively.
+
+I also learned that a successful production build verifies that the application compiles, but it does not prove that every possible API error has been tested at runtime.
+
+Code verification and runtime testing provide different types of evidence.
+
+---
 
 ## 3. Product Loading Failure Had No Retry Option
 
@@ -185,6 +214,8 @@ The original catalog error state did not provide a retry action.
 
 After a failed request, there was no dedicated interface control for triggering another attempt.
 
+This meant that users could see the error but could not easily retry the failed operation without refreshing the page.
+
 ### Fix
 
 Added a Try Again button and `retryCount` state in `Products.tsx`.
@@ -192,6 +223,8 @@ Added a Try Again button and `retryCount` state in `Products.tsx`.
 The `useEffect` dependency list includes the retry count.
 
 Clicking Try Again updates `retryCount`, causing the effect to run again and initiate another product request.
+
+This allows the user to retry loading products without manually refreshing the entire page.
 
 ### Verification
 
@@ -221,6 +254,20 @@ Relevant file:
 
 - `src/pages/Products.tsx`
 
+### Lessons Learned
+
+I learned how to reproduce network failures using Chrome DevTools request blocking.
+
+This allowed me to test the application's error handling under controlled conditions instead of waiting for a real network failure.
+
+I also learned how React state and effect dependencies can be used to retry a failed API request.
+
+Updating `retryCount` triggers another request through `useEffect`, allowing the application to recover without requiring a full page refresh.
+
+Testing both the blocked and unblocked network states helped confirm that the retry functionality worked correctly.
+
+---
+
 ## 4. Error Boundary Testing
 
 ### Problem
@@ -249,9 +296,18 @@ Without a React Error Boundary, an unexpected rendering error could prevent the 
 
 A fallback interface was needed to handle supported rendering errors more gracefully.
 
+The application required a component capable of detecting rendering errors in its child component tree and displaying an alternative interface.
+
 ### Fix
 
-Created an `ErrorBoundary` component and wrapped the application with it in `main.tsx`.
+Created a class-based `ErrorBoundary` component and wrapped the application with it in `main.tsx`.
+
+The implementation uses:
+
+- `getDerivedStateFromError` to update the error state.
+- `componentDidCatch` to log diagnostic information during development.
+- Conditional rendering to display fallback content when an error occurs.
+- A Reload button to reload the application.
 
 The Error Boundary displays fallback content when a supported rendering error occurs in its child component tree.
 
@@ -282,6 +338,18 @@ Relevant files:
 - `src/components/ErrorBoundary.tsx`
 - `src/main.tsx`
 
+### Lessons Learned
+
+I learned that React Error Boundaries can display fallback content when supported rendering errors occur in their child component tree.
+
+I also learned that Error Boundaries do not replace API error handling and do not automatically catch every type of JavaScript error, such as errors in event handlers.
+
+Testing the Error Boundary with a temporary rendering error helped verify that the fallback interface appeared correctly.
+
+Another important lesson was that temporary testing code must be removed after verification so that the application returns to normal behavior.
+
+---
+
 ## 5. Debugging Verification Summary
 
 | Entry | Verification Method | Result | Main Commit |
@@ -291,7 +359,9 @@ Relevant files:
 | Retry functionality | Chrome DevTools request blocking and recovery | Passed | `3d235ee` |
 | Error Boundary | Temporary rendering error and fallback verification | Passed | `6319197` |
 
-## 6. Lessons Learned
+---
+
+## 6. General Lessons Learned
 
 The debugging process demonstrated several important frontend development principles:
 
@@ -306,10 +376,23 @@ The debugging process demonstrated several important frontend development princi
 - Git history helps connect implementation changes to documented debugging cases.
 - Each change should be tested before committing and pushing to GitHub.
 
+---
+
 ## 7. Conclusion
 
 The four documented cases demonstrate practical debugging, implementation, and verification activities completed during the development of 10X Shop.
 
-Each case includes investigation steps, tools, an identified cause or limitation, a solution, verification evidence, and relevant Git commit references.
+Each case includes:
+
+1. A problem or symptom.
+2. Reproduction or investigation steps.
+3. Tools used.
+4. An identified root cause or limitation.
+5. A fix.
+6. Verification evidence.
+7. Relevant Git commit references.
+8. Individual lessons learned.
 
 The debugging process improved application reliability and provided practical experience with React state management, API error handling, network recovery, and rendering error boundaries.
+
+The documented cases also demonstrate the importance of distinguishing between code inspection, successful builds, and verified runtime behavior.
