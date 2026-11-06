@@ -1,9 +1,11 @@
 
 # 10X Shop
 
-**Live Demo:** https://10x-shop-flax.vercel.app
+**Live Demo:** https://10x-shop-flax.vercel.app  https://10x-shop-n-pholadashvili.vercel.app
 
 **GitHub Repository:** https://github.com/NaziPholadashvili/10x-shop
+
+**Demo Video:** https://github.com/NaziPholadashvili/10x-shop/issues/59
 
 10X Shop is a responsive e-commerce demo application built with React 19, TypeScript, Vite 8, Tailwind CSS 4, and React Router 7.
 
