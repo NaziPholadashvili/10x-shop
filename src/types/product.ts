@@ -1,9 +1,11 @@
+
 export interface ProductReview {
     rating: number;
     comment: string;
     date: string;
     reviewerName: string;
     reviewerEmail?: string;
+    userId?: string;
 }
 
 export interface Product {

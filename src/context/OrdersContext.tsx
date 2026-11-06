@@ -1,3 +1,4 @@
+
 import { useState, type ReactNode } from "react";
 import type { Order } from "../types/order";
 import { OrdersContext } from "./orders-context";
@@ -145,8 +146,33 @@ export function OrdersProvider({
         }
     }
 
+    function clearOrders(userId: string): boolean {
+        const updatedOrders = orders.filter(
+            (order) => order.userId !== userId
+        );
+
+        try {
+            localStorage.setItem(
+                ORDERS_STORAGE_KEY,
+                JSON.stringify(updatedOrders)
+            );
+
+            setOrders(updatedOrders);
+            return true;
+        } catch (error) {
+            console.error("Failed to clear user orders:", error);
+            return false;
+        }
+    }
+
     return (
-        <OrdersContext.Provider value={{ orders, addOrder }}>
+        <OrdersContext.Provider
+            value={{
+                orders,
+                addOrder,
+                clearOrders,
+            }}
+        >
             {children}
         </OrdersContext.Provider>
     );
