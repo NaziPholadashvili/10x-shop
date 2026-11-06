@@ -1,4 +1,3 @@
-
 # 10X Shop — Project Plan
 
 ## 1. Project Goal
@@ -11,7 +10,9 @@ The project aims to demonstrate component-based architecture, client-side routin
 
 ## 2. Project Scope
 
-The project includes CORE and FULL requirements.
+The project was initially planned around CORE requirements. During development, the scope was expanded to include targeted FULL requirements and additional user experience improvements.
+
+The following sections describe the final planned scope, including features added during development. This expanded scope should not be interpreted as the complete original plan from the first development day.
 
 ### 2.1 CORE Features
 
@@ -137,20 +138,21 @@ Planned activities:
 
 ### Week 3 — November 3–6, 2026
 
-**Focus: Final integration, testing, documentation, and presentation**
+**Focus: Final feature integration, testing, documentation, and presentation**
 
 Planned activities:
 
 1. Finalize cart calculations and shipping rules.
 2. Implement and verify the `10X10` promotional code.
-3. Complete checkout, orders, and remaining FULL requirements.
+3. Complete checkout, orders, and remaining targeted FULL requirements.
 4. Verify the application using TypeScript, ESLint, and production builds.
 5. Deploy the application to Vercel.
 6. Test application routes and main user flows in production.
 7. Resolve remaining bugs and evaluation feedback.
-8. Finalize README.md, PLAN.md, REPORT.md, and DEBUG-LOG.md.
-9. Complete weekly progress notes.
-10. Record the demo video and prepare for the oral defense.
+8. Complete additional improvements identified during final review.
+9. Finalize README.md, PLAN.md, REPORT.md, and DEBUG-LOG.md.
+10. Complete weekly progress notes.
+11. Record the demo video and prepare for the oral defense.
 
 **Expected milestone:** A deployed, tested, documented application ready for final submission.
 
@@ -334,4 +336,6 @@ The project will aim to satisfy the FULL evaluation criteria for commit history,
 
 **November 6, 2026 — 23:59**
 
-The final development period is reserved for verification, documentation, demonstration, and preparation for the project defense.
+The final development period prioritizes feature integration, verification, deployment, documentation, demonstration, and preparation for the project defense.
+
+Additional improvements may be completed during this period to address testing findings and evaluation feedback.

@@ -1,4 +1,3 @@
-
 # Debug Log — 10X Shop
 
 ## Project Overview
@@ -92,7 +91,7 @@ The Add to Cart functionality was tested manually.
 
 Relevant files:
 
-- `src/contexts/CartContext.tsx`
+- `src/context/CartContext.tsx`
 - `src/pages/Cart.tsx`
 - `src/pages/ProductDetails.tsx`
 

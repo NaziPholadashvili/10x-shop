@@ -1,24 +1,25 @@
-
 # 10X Shop
 
-**Live Demo:** https://10x-shop-flax.vercel.app  https://10x-shop-n-pholadashvili.vercel.app
+**Live Demo:** https://10x-shop-flax.vercel.app
 
 **GitHub Repository:** https://github.com/NaziPholadashvili/10x-shop
 
 **Demo Video:** https://github.com/NaziPholadashvili/10x-shop/issues/59
 
-10X Shop is a responsive e-commerce demo application built with React 19, TypeScript, Vite 8, Tailwind CSS 4, and React Router 7.
+10X Shop is a responsive e-commerce demonstration application built with React 19, TypeScript, Vite 8, Tailwind CSS v4, and React Router 7.
 
 The application allows users to browse products, search and filter the catalog, view product details and reviews, manage a shopping cart, log in using demo authentication, apply promotional discounts, and place demo orders.
 
 Product data is retrieved from the DummyJSON REST API. Demo authentication, cart contents, promotional codes, product reviews, profile information, and order history are managed on the client side, with relevant data persisted in browser localStorage.
+
+The project was initially focused on CORE requirements and was subsequently expanded to include targeted FULL requirements and additional user experience improvements.
 
 ## Technologies
 
 - React 19
 - TypeScript
 - Vite 8
-- Tailwind CSS 4
+- Tailwind CSS v4
 - React Router 7
 - React Context API
 - React Hooks, including `useReducer`
@@ -44,6 +45,7 @@ Product data is retrieved from the DummyJSON REST API. Demo authentication, cart
 - Loading skeletons
 - Error handling and retry functionality
 - Request cancellation using `AbortController`
+- Stock-aware product availability behavior
 
 ### Product Details
 
@@ -78,12 +80,14 @@ Product data is retrieved from the DummyJSON REST API. Demo authentication, cart
 - Display the final total including discounts and shipping
 - Persist cart contents in localStorage
 - Restore saved cart contents after page refresh
+- Maintain user-specific cart and promotional code data
 
 ### Demo Authentication
 
 - Login form with username and password fields
 - Required field validation
 - Minimum password length validation
+- Field-specific validation messages
 - Authentication state managed through React Context
 - Username persistence in localStorage
 - Logout functionality
@@ -108,12 +112,13 @@ Authentication is simulated for educational purposes. Login credentials are not 
 - Generated order numbers
 - Order history stored in localStorage
 - Order details page
-- Order status tracking
+- Dynamic order status display
 - Reorder functionality
 - Order confirmation after successful storage
 - Cart clearing after successful order placement
 - Promotional code clearing after successful checkout
 - Error handling for failed order storage
+- User-specific order history display
 
 Checkout does not process real payments or submit orders to a production backend.
 
@@ -121,7 +126,15 @@ Checkout does not process real payments or submit orders to a production backend
 
 - Protected profile page
 - Editable user profile information
-- Locally managed user information
+- Locally persisted user information
+- User-specific profile data handling
+- Clear Local Data functionality
+- Support for clearing the current user's saved application data
+- Error-handling and restoration logic for supported local storage operations
+
+The Clear Local Data functionality was manually tested using a secondary demo account. The test confirmed that profile data remained cleared after a page refresh, while the session and selected theme remained available.
+
+Not every possible browser storage failure or multi-user scenario was exhaustively tested.
 
 ### Navigation and User Experience
 
@@ -132,7 +145,9 @@ Checkout does not process real payments or submit orders to a production backend
 - Automatic scroll to top on route changes
 - Custom 404 Not Found page
 - Error Boundary for unexpected React rendering errors
-- Loading and error states
+- Loading, empty, and error states
+- Dark Mode and theme switching
+- Theme preference persistence in localStorage
 
 ## Application Routes
 
@@ -171,7 +186,7 @@ The application retrieves product information from the public DummyJSON API.
 | `GET /products/category-list` | Retrieve available categories |
 | `GET /products/:id` | Retrieve product details |
 
-Catalog requests use:
+Catalog requests may use the following query parameters:
 
 - `limit` and `skip` for pagination
 - `sortBy` and `order` for sorting
@@ -250,7 +265,7 @@ Orders are stored locally and are not submitted to a real payment or order-proce
 
 ### 5. Persistence and Error Handling
 
-Browser localStorage is used to retain relevant demo data between page refreshes, including authentication state, cart contents, promotional codes, orders, reviews, and profile information.
+Browser localStorage is used to retain relevant demo data between page refreshes, including authentication state, cart contents, promotional codes, orders, reviews, profile information, and theme preference.
 
 Stored data is read and restored by the relevant application logic. The project uses validation and type guards for supported persisted data structures to reduce the risk of using invalid stored values.
 
@@ -316,7 +331,7 @@ Add products to the cart and enter:
 
 The code applies an additional 10% discount to the cart subtotal.
 
-The promotional code is case-insensitive and remains active after a page refresh until it is removed or the cart is cleared.
+The promotional code is case-insensitive and remains active after a page refresh until it is removed or cleared through the supported cart or checkout flow.
 
 ## Available Scripts
 
@@ -428,14 +443,20 @@ The shopping cart and checkout use the same pricing rules to maintain consistent
 
 The application uses browser localStorage to persist demo data.
 
-| Key | Purpose |
+| Key or Key Pattern | Purpose |
 |---|---|
-| `10x-shop-username` | Store the demo username |
-| `10x-shop-cart` | Store shopping cart contents |
-| `10x-shop-orders` | Store order history |
-| `10x-shop-promo` | Store the active promotional code |
+| `10x-shop-username` | Store the current demo username |
+| `10x-shop-cart-${owner}` | Store cart contents separately for each demo user |
+| `10x-shop-promo-${owner}` | Store the promotional code separately for each demo user |
+| `10x-shop-orders` | Store order records, with user-related filtering in application logic |
 
-Product reviews and profile information also use local browser storage.
+The `${owner}` portion represents the user-specific identifier generated by the application.
+
+Product reviews, profile information, and theme preferences also use browser storage. Their persistence is managed by the corresponding application logic.
+
+Although order records share a storage collection, the application associates orders with users and filters the displayed order history accordingly.
+
+User-specific storage reduces unintended sharing between demo accounts, but it does not provide server-side security or access control.
 
 Data is stored locally in the browser. Clearing browser storage can remove saved demo data.
 
@@ -480,6 +501,9 @@ The application has been checked for:
 - Checkout form validation
 - Order creation and order details
 - Invalid product IDs and missing products
+- Dark Mode functionality
+- User-specific local data handling
+- Local data clearing using a secondary demo account
 
 ### Production Verification
 
@@ -503,6 +527,23 @@ The deployed Vercel application has been checked for:
 
 These checks were performed manually during development and production verification.
 
+Some broader regression scenarios, including every responsive layout and every possible browser storage failure condition, were not exhaustively tested.
+
+### Lighthouse Audit
+
+A mobile Lighthouse audit was performed on November 5, 2026, using Chrome DevTools against the deployed Vercel application.
+
+| Category | Recorded Score |
+|---|---:|
+| Performance | 94 |
+| Accessibility | 95 |
+| Best Practices | 100 |
+| SEO | 83 |
+
+The recorded scores represent one audit run and may vary with network conditions, device emulation, and application state.
+
+Additional audit details and production bundle measurements are documented in `REPORT.md`.
+
 ## Development Progress
 
 Development progress is documented in:
@@ -516,6 +557,8 @@ Development progress is documented in:
 
 The repository also includes Git commit history, feature branches, GitHub Issues, and merged Pull Requests documenting the development process.
 
+The third development week included final pricing and cart improvements, deployment, validation fixes, user experience improvements, testing, documentation, and demo video preparation.
+
 ## Limitations
 
 10X Shop is an educational demonstration project, not a production e-commerce platform.
@@ -524,12 +567,14 @@ The repository also includes Git commit history, feature branches, GitHub Issues
 - Orders are stored in browser localStorage instead of a backend database.
 - Real payments are not supported.
 - Product data depends on the external DummyJSON API.
-- Cart, reviews, and order data are not synchronized between devices.
+- Cart, reviews, profile information, and order data are not synchronized between devices.
 - Promotional discounts are implemented for demonstration purposes.
+- User-specific browser storage does not replace secure backend authorization.
+- Some responsive and storage failure scenarios were not exhaustively tested.
 
 ## Deployment
 
-10X Shop is deployed to Vercel.
+10X Shop was deployed to Vercel on November 3, 2026.
 
 **Live Demo:** https://10x-shop-flax.vercel.app
 
@@ -566,6 +611,8 @@ It demonstrates:
 - Responsive user interfaces
 - Error handling and recovery
 - Pricing and shipping calculations
+- User-specific client-side data handling
+- Dark Mode implementation
 - Git and GitHub development workflows
 - Production deployment using Vercel
 

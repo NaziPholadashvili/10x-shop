@@ -10,9 +10,9 @@ The main objective was to demonstrate practical frontend development skills, inc
 
 **Project deadline:** November 6, 2026, at 23:59.
 
-**Main feature development completed:** November 3, 2026.
+**Main e-commerce feature milestone:** November 3, 2026.
 
-**Final review and improvements:** November 4–6, 2026.
+**Final feature improvements, testing, and documentation:** November 4–6, 2026.
 
 **Live application:** https://10x-shop-flax.vercel.app
 
@@ -484,7 +484,7 @@ Some early features and documentation changes were committed directly to `main`.
 
 ### 7.1 Git Statistics
 
-**Final documentation snapshot — November 6, 2026 (including the planned final report commit):**
+**Recorded project history snapshot — November 6, 2026, before the final documentation reconciliation commit:**
 
 | Metric | Result |
 |---|---:|
@@ -494,13 +494,13 @@ Some early features and documentation changes were committed directly to `main`.
 | GitHub Issues | 29 |
 | GitHub branches | 31 |
 
-The project has exceeded the quantitative FULL-level development targets:
+The project exceeded the quantitative FULL-level development targets:
 
 - At least 40 meaningful commits
 - At least 15 distinct commit dates
 - At least 8 merged Pull Requests
 
-The 101 commits represent the expected total Git history reachable from the `main` branch after committing this final report update, including merge commits.
+The 101 commits represent the recorded Git history at the stated snapshot, including merge commits.
 
 The 18 distinct commit dates were calculated from Git history.
 
@@ -510,7 +510,7 @@ The Issue and branch counts reflect the repository totals observed during the fi
 
 These metrics describe different aspects of the repository and are not expected to match each other.
 
-The statistics reflect the November 6 final documentation snapshot, subject to confirmation after the report commit is pushed.
+Subsequent documentation-only commits may increase the total commit count without changing the recorded historical snapshot.
 
 ### 7.2 GitHub Workflow Examples
 
@@ -690,7 +690,7 @@ AI assistance did not replace manual testing or verification of application beha
 | README.md | Updated with Data Flow, Credits, and Demo Video |
 | DEBUG-LOG.md | Created with documented debugging cases |
 | REPORT.md | Updated with final project information |
-| Weekly progress reports | Created |
+| Weekly progress reports | Three reports created and updated |
 | Live deployed application | Completed |
 | Production verification | Main flows verified |
 | Lighthouse audit | Completed |
@@ -705,11 +705,11 @@ AI assistance did not replace manual testing or verification of application beha
 
 ## 12. Remaining Work
 
-The main implementation, deployment, documentation, and demo recording tasks have been completed.
+The main application implementation, deployment, demonstration video, and project documentation have been completed.
 
-Remaining activities are:
+The remaining activities are:
 
-1. Confirm that the final REPORT.md update is committed and pushed.
+1. Review and commit any final documentation consistency corrections.
 2. Confirm that the submission links are accessible.
 3. Prepare for the oral defense.
 4. Complete any additional submission steps required by the lecturer.
@@ -756,7 +756,7 @@ The November 5 Lighthouse audit recorded Performance 94, Accessibility 95, Best 
 
 The November 5 production build completed successfully, generating approximately 341.41 kB of HTML, CSS, and JavaScript assets before compression and 100.67 kB according to the reported gzip sizes.
 
-Following the final report commit, the project is expected to have **101 commits in the `main` history, 18 distinct commit dates, and 30 merged Pull Requests**, exceeding the quantitative FULL-level development targets.
+At the November 6 project history snapshot, the repository had **101 commits in the `main` history, 18 distinct commit dates, and 30 merged Pull Requests**, exceeding the quantitative FULL-level development targets. Subsequent documentation corrections may add further commits.
 
 The Demo Video has been recorded and linked in the project README.
 

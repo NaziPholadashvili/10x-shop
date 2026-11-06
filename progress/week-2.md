@@ -9,7 +9,7 @@
 
 The second week focused on improving application reliability, code quality, user experience, and completing advanced e-commerce functionality.
 
-The main priorities were:
+The main priorities and features addressed during the second week included:
 
 - Error handling and recovery
 - TypeScript and ESLint improvements
@@ -139,8 +139,9 @@ These Pull Requests helped organize changes into reviewable units.
 
 ## 6. Weekly Git Summary
 
-- **34 commits** appear in the provided Git history for this period.
+- **34 commits** appear in the recorded Git history for this period.
 - **7 distinct development days** were recorded.
+- The recorded history includes **11 merge commits**.
 - Work included feature development, bug fixes, refactoring, documentation, and merged Pull Requests.
 
 ## 7. Next Steps

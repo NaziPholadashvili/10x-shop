@@ -9,7 +9,7 @@
 
 The main goal of the first week was to establish the project structure and implement the core functionality of an e-commerce application using React and TypeScript.
 
-The planned work included:
+The initial priorities and features addressed during the first week included:
 
 - Initial project setup and documentation
 - Application layout and navigation
