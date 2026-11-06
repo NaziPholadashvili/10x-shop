@@ -31,7 +31,6 @@ function SearchField({
     onSearch,
 }: SearchFieldProps) {
     const [value, setValue] = useState(initialValue);
-
     const debouncedValue = useDebounce(value, 400);
 
     useEffect(() => {
@@ -50,7 +49,7 @@ function SearchField({
         <div>
             <label
                 htmlFor="product-search"
-                className="mb-2 block font-medium text-slate-700"
+                className="mb-2 block font-medium text-slate-700 dark:text-slate-200"
             >
                 Search Products
             </label>
@@ -61,7 +60,7 @@ function SearchField({
                 value={value}
                 onChange={(event) => setValue(event.target.value)}
                 placeholder="Search by product name..."
-                className="w-full rounded-lg border border-slate-300 bg-white p-3 outline-none focus:border-indigo-500"
+                className="w-full rounded-lg border border-slate-300 bg-white p-3 text-slate-900 placeholder:text-slate-400 outline-none focus:border-indigo-500 dark:border-slate-600 dark:bg-slate-800 dark:text-white dark:placeholder:text-slate-400"
             />
         </div>
     );
@@ -303,8 +302,8 @@ export default function Products() {
         sort !== "default";
 
     return (
-        <main className="mx-auto max-w-7xl p-8">
-            <h1 className="mb-8 text-3xl font-bold text-slate-900">
+        <main className="mx-auto max-w-7xl p-8 text-slate-900 dark:text-slate-100">
+            <h1 className="mb-8 text-3xl font-bold text-slate-900 dark:text-white">
                 Our Products
             </h1>
 
@@ -318,7 +317,7 @@ export default function Products() {
                 <div>
                     <label
                         htmlFor="category-filter"
-                        className="mb-2 block font-medium text-slate-700"
+                        className="mb-2 block font-medium text-slate-700 dark:text-slate-200"
                     >
                         Filter by Category
                     </label>
@@ -329,7 +328,7 @@ export default function Products() {
                         onChange={(event) =>
                             handleCategoryChange(event.target.value)
                         }
-                        className="w-full rounded-lg border border-slate-300 bg-white p-3 outline-none focus:border-indigo-500"
+                        className="w-full rounded-lg border border-slate-300 bg-white p-3 text-slate-900 outline-none focus:border-indigo-500 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
                     >
                         <option value="all">
                             All Categories
@@ -346,7 +345,7 @@ export default function Products() {
                 <div>
                     <label
                         htmlFor="product-sort"
-                        className="mb-2 block font-medium text-slate-700"
+                        className="mb-2 block font-medium text-slate-700 dark:text-slate-200"
                     >
                         Sort Products
                     </label>
@@ -359,7 +358,7 @@ export default function Products() {
                                 event.target.value as CatalogSortOption
                             )
                         }
-                        className="w-full rounded-lg border border-slate-300 bg-white p-3 outline-none focus:border-indigo-500"
+                        className="w-full rounded-lg border border-slate-300 bg-white p-3 text-slate-900 outline-none focus:border-indigo-500 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
                     >
                         <option value="default">
                             Default
@@ -388,7 +387,7 @@ export default function Products() {
                 <button
                     type="button"
                     onClick={handleClearFilters}
-                    className="mb-6 rounded-lg border border-slate-300 px-4 py-2 font-medium text-slate-700 hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                    className="mb-6 rounded-lg border border-slate-300 px-4 py-2 font-medium text-slate-700 hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-800"
                 >
                     Clear Filters
                 </button>
@@ -408,7 +407,7 @@ export default function Products() {
                 <div>
                     <p
                         role="alert"
-                        className="mb-4 text-red-600"
+                        className="mb-4 text-red-600 dark:text-red-400"
                     >
                         {error}
                     </p>
@@ -428,7 +427,7 @@ export default function Products() {
             ) : (
                 <>
                     {sortedProducts.length === 0 ? (
-                        <p className="text-slate-600">
+                        <p className="text-slate-600 dark:text-slate-300">
                             No products found.
                         </p>
                     ) : (
@@ -453,12 +452,12 @@ export default function Products() {
                                     handlePageChange(page - 1)
                                 }
                                 disabled={page === 1}
-                                className="rounded-lg border border-slate-300 px-4 py-2 font-medium text-slate-700 hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-50"
+                                className="rounded-lg border border-slate-300 px-4 py-2 font-medium text-slate-700 hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-800"
                             >
                                 Previous
                             </button>
 
-                            <span className="text-sm font-medium text-slate-700">
+                            <span className="text-sm font-medium text-slate-700 dark:text-slate-200">
                                 Page {page} of {totalPages}
                             </span>
 
@@ -468,7 +467,7 @@ export default function Products() {
                                     handlePageChange(page + 1)
                                 }
                                 disabled={page >= totalPages}
-                                className="rounded-lg border border-slate-300 px-4 py-2 font-medium text-slate-700 hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-50"
+                                className="rounded-lg border border-slate-300 px-4 py-2 font-medium text-slate-700 hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-800"
                             >
                                 Next
                             </button>

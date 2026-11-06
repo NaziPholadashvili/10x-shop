@@ -11,20 +11,26 @@ import {
     type CartState,
 } from "./cart.reducer";
 import { Cart } from "../models/Cart";
+import { useAuth } from "./useAuth";
 
-const CART_STORAGE_KEY = "10x-shop-cart";
-const PROMO_STORAGE_KEY = "10x-shop-promo";
+const LEGACY_CART_STORAGE_KEY = "10x-shop-cart";
+const LEGACY_PROMO_STORAGE_KEY = "10x-shop-promo";
 
-function loadCart(): CartState {
-    const emptyCart: CartState = {
-        items: [],
-        promoCode: null,
-    };
+function getCartStorageKey(owner: string): string {
+    return `10x-shop-cart-${owner}`;
+}
 
+function getPromoStorageKey(owner: string): string {
+    return `10x-shop-promo-${owner}`;
+}
+
+function loadCart(owner: string): CartState {
     let items: CartItem[] = [];
 
     try {
-        const savedCart = localStorage.getItem(CART_STORAGE_KEY);
+        const savedCart = localStorage.getItem(
+            getCartStorageKey(owner)
+        );
 
         if (savedCart) {
             const parsed: unknown = JSON.parse(savedCart);
@@ -68,7 +74,9 @@ function loadCart(): CartState {
     let promoCode: string | null = null;
 
     try {
-        const savedPromo = localStorage.getItem(PROMO_STORAGE_KEY);
+        const savedPromo = localStorage.getItem(
+            getPromoStorageKey(owner)
+        );
 
         if (
             items.length > 0 &&
@@ -81,20 +89,23 @@ function loadCart(): CartState {
     }
 
     return {
-        ...emptyCart,
         items,
         promoCode,
     };
 }
 
-export function CartProvider({
-    children,
-}: {
+interface UserCartProviderProps {
+    owner: string;
     children: ReactNode;
-}) {
+}
+
+function UserCartProvider({
+    owner,
+    children,
+}: UserCartProviderProps) {
     const [state, dispatch] = useReducer(
         cartReducer,
-        undefined,
+        owner,
         loadCart
     );
 
@@ -103,30 +114,38 @@ export function CartProvider({
     useEffect(() => {
         try {
             localStorage.setItem(
-                CART_STORAGE_KEY,
+                getCartStorageKey(owner),
                 JSON.stringify(items)
             );
         } catch (error) {
             console.error("Failed to save cart:", error);
         }
-    }, [items]);
+    }, [owner, items]);
 
     useEffect(() => {
         try {
             if (promoCode && items.length > 0) {
                 localStorage.setItem(
-                    PROMO_STORAGE_KEY,
+                    getPromoStorageKey(owner),
                     promoCode
                 );
             } else {
-                localStorage.removeItem(PROMO_STORAGE_KEY);
+                localStorage.removeItem(
+                    getPromoStorageKey(owner)
+                );
             }
         } catch (error) {
-            console.error("Failed to save promo code:", error);
+            console.error(
+                "Failed to save promo code:",
+                error
+            );
         }
-    }, [promoCode, items.length]);
+    }, [owner, promoCode, items.length]);
 
-    function addToCart(product: Product, quantity = 1) {
+    function addToCart(
+        product: Product,
+        quantity = 1
+    ) {
         dispatch({
             type: "ADD_ITEM",
             product,
@@ -141,7 +160,10 @@ export function CartProvider({
         });
     }
 
-    function updateQuantity(productId: number, quantity: number) {
+    function updateQuantity(
+        productId: number,
+        quantity: number
+    ) {
         dispatch({
             type: "SET_QTY",
             productId,
@@ -150,7 +172,9 @@ export function CartProvider({
     }
 
     function clearCart() {
-        dispatch({ type: "CLEAR" });
+        dispatch({
+            type: "CLEAR",
+        });
     }
 
     function applyPromo(code: string): boolean {
@@ -170,7 +194,9 @@ export function CartProvider({
     }
 
     function removePromo() {
-        dispatch({ type: "REMOVE_PROMO" });
+        dispatch({
+            type: "REMOVE_PROMO",
+        });
     }
 
     const cart = new Cart(items, promoCode);
@@ -203,3 +229,30 @@ export function CartProvider({
         </CartContext.Provider>
     );
 }
+
+export function CartProvider({
+    children,
+}: {
+    children: ReactNode;
+}) {
+    const { username } = useAuth();
+
+    const owner = username === null
+        ? "guest"
+        : `user-${encodeURIComponent(username)}`;
+
+    return (
+        <UserCartProvider
+            key={owner}
+            owner={owner}
+        >
+            {children}
+        </UserCartProvider>
+    );
+}
+
+// Legacy storage keys are intentionally preserved.
+// Existing data remains available in localStorage
+// and is not automatically assigned to another user.
+void LEGACY_CART_STORAGE_KEY;
+void LEGACY_PROMO_STORAGE_KEY;
