@@ -52,24 +52,24 @@ export default function Login() {
         <main className="mx-auto max-w-md px-6 py-12">
             <Link
                 to="/"
-                className="mb-6 inline-block text-sm font-medium text-indigo-600 hover:underline"
+                className="mb-6 inline-block text-sm font-medium text-indigo-600 hover:underline dark:text-indigo-400"
             >
                 ← Back to catalog
             </Link>
 
-            <h1 className="mb-8 text-3xl font-bold text-slate-900">
+            <h1 className="mb-8 text-3xl font-bold text-slate-900 dark:text-white">
                 Log in
             </h1>
 
             <form
                 onSubmit={handleSubmit}
                 noValidate
-                className="space-y-5 rounded-xl bg-white p-6 shadow-sm"
+                className="space-y-5 rounded-xl border border-slate-200 bg-white p-6 text-slate-900 shadow-sm dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
             >
                 <div>
                     <label
                         htmlFor="username"
-                        className="mb-2 block font-medium"
+                        className="mb-2 block font-medium text-slate-700 dark:text-slate-200"
                     >
                         Username
                     </label>
@@ -92,14 +92,14 @@ export default function Login() {
                                 ? "username-error"
                                 : undefined
                         }
-                        className="w-full rounded-lg border border-slate-300 p-3"
+                        className="w-full rounded-lg border border-slate-300 bg-white p-3 text-slate-900 outline-none focus:border-indigo-500 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
                     />
 
                     {errors.username && (
                         <p
                             id="username-error"
                             role="alert"
-                            className="mt-1 text-sm text-red-600"
+                            className="mt-1 text-sm text-red-600 dark:text-red-400"
                         >
                             {errors.username}
                         </p>
@@ -109,7 +109,7 @@ export default function Login() {
                 <div>
                     <label
                         htmlFor="password"
-                        className="mb-2 block font-medium"
+                        className="mb-2 block font-medium text-slate-700 dark:text-slate-200"
                     >
                         Password
                     </label>
@@ -133,14 +133,14 @@ export default function Login() {
                                 ? "password-error"
                                 : undefined
                         }
-                        className="w-full rounded-lg border border-slate-300 p-3"
+                        className="w-full rounded-lg border border-slate-300 bg-white p-3 text-slate-900 outline-none focus:border-indigo-500 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
                     />
 
                     {errors.password && (
                         <p
                             id="password-error"
                             role="alert"
-                            className="mt-1 text-sm text-red-600"
+                            className="mt-1 text-sm text-red-600 dark:text-red-400"
                         >
                             {errors.password}
                         </p>

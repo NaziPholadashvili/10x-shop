@@ -60,21 +60,27 @@ export default function RelatedProducts({
         >
             <h2
                 id="related-products-heading"
-                className="mb-6 text-2xl font-bold text-slate-900"
+                className="mb-6 text-2xl font-bold text-slate-900 dark:text-white"
             >
                 Related Products
             </h2>
 
             {loading ? (
-                <p role="status" className="text-slate-600">
+                <p
+                    role="status"
+                    className="text-slate-600 dark:text-slate-300"
+                >
                     Loading related products...
                 </p>
             ) : error ? (
-                <p role="alert" className="text-red-600">
+                <p
+                    role="alert"
+                    className="text-red-600 dark:text-red-400"
+                >
                     {error}
                 </p>
             ) : products.length === 0 ? (
-                <p className="text-slate-600">
+                <p className="text-slate-600 dark:text-slate-300">
                     No related products available.
                 </p>
             ) : (
