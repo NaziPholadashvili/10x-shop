@@ -78,26 +78,26 @@ export default function OrderDetails() {
         <main className="mx-auto max-w-4xl px-6 py-12">
             <Link
                 to="/orders"
-                className="mb-6 inline-block font-semibold text-indigo-600 hover:underline"
+                className="mb-6 inline-block font-semibold text-indigo-600 hover:underline dark:text-indigo-400"
             >
                 Back to My Orders
             </Link>
 
-            <h1 className="mb-4 text-3xl font-bold text-slate-900">
+            <h1 className="mb-4 text-3xl font-bold text-slate-900 dark:text-white">
                 Order #{order.number ?? order.id.slice(0, 8)}
             </h1>
 
-            <p className="mb-8 text-slate-600">
+            <p className="mb-8 text-slate-600 dark:text-slate-300">
                 Placed on {new Date(order.createdAt).toLocaleString()}
             </p>
 
-            <section className="mb-6 rounded-xl bg-white p-6 shadow-sm">
+            <section className="mb-6 rounded-xl border border-slate-200 bg-white p-6 text-slate-900 shadow-sm dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100">
                 <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-                    <h2 className="text-xl font-semibold text-slate-900">
+                    <h2 className="text-xl font-semibold text-slate-900 dark:text-white">
                         Order Status
                     </h2>
 
-                    <span className="rounded-full bg-indigo-100 px-4 py-2 text-sm font-semibold text-indigo-700">
+                    <span className="rounded-full bg-indigo-100 px-4 py-2 text-sm font-semibold text-indigo-700 dark:bg-indigo-900 dark:text-indigo-200">
                         {status}
                     </span>
                 </div>
@@ -119,7 +119,7 @@ export default function OrderDetails() {
                                 <div
                                     className={`flex h-10 w-10 items-center justify-center rounded-full font-bold ${isCompleted
                                             ? "bg-green-600 text-white"
-                                            : "bg-slate-200 text-slate-500"
+                                            : "bg-slate-200 text-slate-500 dark:bg-slate-700 dark:text-slate-300"
                                         }`}
                                 >
                                     {isCompleted ? "✓" : index + 1}
@@ -127,8 +127,8 @@ export default function OrderDetails() {
 
                                 <span
                                     className={`text-sm font-medium ${isCompleted
-                                            ? "text-green-700"
-                                            : "text-slate-500"
+                                            ? "text-green-700 dark:text-green-400"
+                                            : "text-slate-500 dark:text-slate-400"
                                         }`}
                                 >
                                     {step}
@@ -138,17 +138,17 @@ export default function OrderDetails() {
                     })}
                 </ol>
 
-                <p className="mt-6 text-center text-sm text-slate-600">
+                <p className="mt-6 text-center text-sm text-slate-600 dark:text-slate-300">
                     Current status: {status}
                 </p>
             </section>
 
-            <section className="mb-6 rounded-xl bg-white p-6 shadow-sm">
-                <h2 className="mb-6 text-xl font-semibold text-slate-900">
+            <section className="mb-6 rounded-xl border border-slate-200 bg-white p-6 text-slate-900 shadow-sm dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100">
+                <h2 className="mb-6 text-xl font-semibold text-slate-900 dark:text-white">
                     Order Items
                 </h2>
 
-                <ul className="divide-y divide-slate-200">
+                <ul className="divide-y divide-slate-200 dark:divide-slate-700">
                     {order.items.map((item) => {
                         const unitPrice =
                             item.unitPrice ?? item.product.price;
@@ -167,20 +167,20 @@ export default function OrderDetails() {
                                 className="flex flex-wrap items-center justify-between gap-4 py-4"
                             >
                                 <div>
-                                    <h3 className="font-semibold text-slate-900">
+                                    <h3 className="font-semibold text-slate-900 dark:text-white">
                                         {item.product.title}
                                     </h3>
 
-                                    <p className="mt-1 text-sm text-slate-600">
+                                    <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">
                                         Quantity: {item.quantity}
                                     </p>
 
-                                    <p className="mt-1 text-sm text-slate-600">
+                                    <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">
                                         Unit price: {formatPrice(unitPrice)}
                                     </p>
                                 </div>
 
-                                <p className="font-semibold text-slate-900">
+                                <p className="font-semibold text-slate-900 dark:text-white">
                                     {formatPrice(lineTotal)}
                                 </p>
                             </li>
@@ -188,13 +188,13 @@ export default function OrderDetails() {
                     })}
                 </ul>
 
-                <div className="mt-4 border-t border-slate-200 pt-5">
+                <div className="mt-4 border-t border-slate-200 pt-5 dark:border-slate-700">
                     <div className="flex items-center justify-between gap-4">
-                        <span className="text-slate-600">
+                        <span className="text-slate-600 dark:text-slate-300">
                             Total items
                         </span>
 
-                        <span className="font-semibold text-slate-900">
+                        <span className="font-semibold text-slate-900 dark:text-white">
                             {order.totalItems}
                         </span>
                     </div>
@@ -202,33 +202,33 @@ export default function OrderDetails() {
                     {hasPriceBreakdown && (
                         <div className="mt-5 space-y-3">
                             <div className="flex items-center justify-between gap-4">
-                                <span className="text-slate-600">
+                                <span className="text-slate-600 dark:text-slate-300">
                                     Subtotal
                                 </span>
 
-                                <span className="font-medium text-slate-900">
+                                <span className="font-medium text-slate-900 dark:text-white">
                                     {formatPrice(order.subtotal!)}
                                 </span>
                             </div>
 
                             {savedDiscount > 0 && (
                                 <div className="flex items-center justify-between gap-4">
-                                    <span className="text-green-700">
+                                    <span className="text-green-700 dark:text-green-400">
                                         Discount
                                     </span>
 
-                                    <span className="font-medium text-green-700">
+                                    <span className="font-medium text-green-700 dark:text-green-400">
                                         -{formatPrice(savedDiscount)}
                                     </span>
                                 </div>
                             )}
 
                             <div className="flex items-center justify-between gap-4">
-                                <span className="text-slate-600">
+                                <span className="text-slate-600 dark:text-slate-300">
                                     Shipping
                                 </span>
 
-                                <span className="font-medium text-slate-900">
+                                <span className="font-medium text-slate-900 dark:text-white">
                                     {order.shippingCost === 0
                                         ? "Free"
                                         : formatPrice(order.shippingCost!)}
@@ -237,65 +237,70 @@ export default function OrderDetails() {
                         </div>
                     )}
 
-                    <div className="mt-5 flex items-center justify-between gap-4 border-t border-slate-200 pt-4">
-                        <span className="text-lg font-semibold text-slate-900">
+                    <div className="mt-5 flex items-center justify-between gap-4 border-t border-slate-200 pt-4 dark:border-slate-700">
+                        <span className="text-lg font-semibold text-slate-900 dark:text-white">
                             Order Total
                         </span>
 
-                        <span className="text-2xl font-bold text-indigo-700">
+                        <span className="text-2xl font-bold text-indigo-700 dark:text-indigo-400">
                             {formatPrice(order.totalPrice)}
                         </span>
                     </div>
                 </div>
             </section>
 
-            <section className="mb-6 rounded-xl bg-white p-6 shadow-sm">
-                <h2 className="mb-6 text-xl font-semibold text-slate-900">
+            <section className="mb-6 rounded-xl border border-slate-200 bg-white p-6 text-slate-900 shadow-sm dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100">
+                <h2 className="mb-6 text-xl font-semibold text-slate-900 dark:text-white">
                     Shipping Information
                 </h2>
 
                 <dl className="space-y-4">
                     <div>
-                        <dt className="text-sm font-medium text-slate-500">
+                        <dt className="text-sm font-medium text-slate-500 dark:text-slate-400">
                             Full Name
                         </dt>
-                        <dd className="mt-1 text-slate-900">
+
+                        <dd className="mt-1 text-slate-900 dark:text-white">
                             {order.shippingInformation.fullName}
                         </dd>
                     </div>
 
                     <div>
-                        <dt className="text-sm font-medium text-slate-500">
+                        <dt className="text-sm font-medium text-slate-500 dark:text-slate-400">
                             Email
                         </dt>
-                        <dd className="mt-1 break-words text-slate-900">
+
+                        <dd className="mt-1 wrap-break-word text-slate-900 dark:text-white">
                             {order.shippingInformation.email}
                         </dd>
                     </div>
 
                     <div>
-                        <dt className="text-sm font-medium text-slate-500">
+                        <dt className="text-sm font-medium text-slate-500 dark:text-slate-400">
                             Address
                         </dt>
-                        <dd className="mt-1 text-slate-900">
+
+                        <dd className="mt-1 text-slate-900 dark:text-white">
                             {order.shippingInformation.address}
                         </dd>
                     </div>
 
                     <div>
-                        <dt className="text-sm font-medium text-slate-500">
+                        <dt className="text-sm font-medium text-slate-500 dark:text-slate-400">
                             City
                         </dt>
-                        <dd className="mt-1 text-slate-900">
+
+                        <dd className="mt-1 text-slate-900 dark:text-white">
                             {order.shippingInformation.city}
                         </dd>
                     </div>
 
                     <div>
-                        <dt className="text-sm font-medium text-slate-500">
+                        <dt className="text-sm font-medium text-slate-500 dark:text-slate-400">
                             Postal Code
                         </dt>
-                        <dd className="mt-1 text-slate-900">
+
+                        <dd className="mt-1 text-slate-900 dark:text-white">
                             {order.shippingInformation.postalCode}
                         </dd>
                     </div>

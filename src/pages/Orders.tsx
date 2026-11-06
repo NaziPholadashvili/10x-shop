@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/useAuth";
@@ -32,13 +31,13 @@ export default function Orders() {
 
     return (
         <main className="mx-auto max-w-4xl px-6 py-12">
-            <h1 className="mb-8 text-3xl font-bold text-slate-900">
+            <h1 className="mb-8 text-3xl font-bold text-slate-900 dark:text-slate-100">
                 My Orders
             </h1>
 
             {userOrders.length === 0 ? (
-                <div className="rounded-xl bg-white p-8 text-center shadow-sm">
-                    <p className="mb-6 text-slate-600">
+                <div className="rounded-xl border border-slate-200 bg-white p-8 text-center shadow-sm dark:border-slate-700 dark:bg-slate-800">
+                    <p className="mb-6 text-slate-600 dark:text-slate-300">
                         You have no orders yet.
                     </p>
 
@@ -59,23 +58,25 @@ export default function Orders() {
 
                         const statusClasses =
                             status === "Delivered"
-                                ? "bg-green-100 text-green-700"
+                                ? "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300"
                                 : status === "Shipped"
-                                    ? "bg-blue-100 text-blue-700"
-                                    : "bg-yellow-100 text-yellow-800";
+                                    ? "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300"
+                                    : "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-300";
 
                         return (
                             <section
                                 key={order.id}
-                                className="rounded-xl bg-white p-6 shadow-sm"
+                                className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-800"
                             >
                                 <div className="mb-4 flex flex-wrap items-center justify-between gap-4">
                                     <div>
-                                        <h2 className="font-semibold text-slate-900">
-                                            Order #{order.number ?? order.id.slice(0, 8)}
+                                        <h2 className="font-semibold text-slate-900 dark:text-slate-100">
+                                            Order #
+                                            {order.number ??
+                                                order.id.slice(0, 8)}
                                         </h2>
 
-                                        <p className="text-sm text-slate-500">
+                                        <p className="text-sm text-slate-500 dark:text-slate-400">
                                             {new Date(
                                                 order.createdAt
                                             ).toLocaleString()}
@@ -89,7 +90,7 @@ export default function Orders() {
                                     </span>
                                 </div>
 
-                                <ul className="space-y-3 border-t py-4">
+                                <ul className="space-y-3 border-t border-slate-200 py-4 dark:border-slate-700">
                                     {order.items.map((item) => {
                                         const unitPrice =
                                             item.unitPrice ??
@@ -98,7 +99,8 @@ export default function Orders() {
                                         const lineTotal =
                                             Math.round(
                                                 (
-                                                    unitPrice * item.quantity +
+                                                    unitPrice *
+                                                    item.quantity +
                                                     Number.EPSILON
                                                 ) * 100
                                             ) / 100;
@@ -108,12 +110,12 @@ export default function Orders() {
                                                 key={item.product.id}
                                                 className="flex justify-between gap-4"
                                             >
-                                                <span>
+                                                <span className="text-slate-700 dark:text-slate-200">
                                                     {item.product.title} ×{" "}
                                                     {item.quantity}
                                                 </span>
 
-                                                <span className="font-medium">
+                                                <span className="font-medium text-slate-900 dark:text-slate-100">
                                                     {formatPrice(lineTotal)}
                                                 </span>
                                             </li>
@@ -121,18 +123,19 @@ export default function Orders() {
                                     })}
                                 </ul>
 
-                                <div className="border-t pt-4">
-                                    <p className="text-sm text-slate-600">
+                                <div className="border-t border-slate-200 pt-4 dark:border-slate-700">
+                                    <p className="text-sm text-slate-600 dark:text-slate-400">
                                         Total items: {order.totalItems}
                                     </p>
 
-                                    <p className="mt-2 text-xl font-bold text-slate-900">
-                                        Total: {formatPrice(order.totalPrice)}
+                                    <p className="mt-2 text-xl font-bold text-slate-900 dark:text-slate-100">
+                                        Total:{" "}
+                                        {formatPrice(order.totalPrice)}
                                     </p>
 
                                     <Link
                                         to={`/orders/${order.id}`}
-                                        className="mt-4 inline-block rounded-lg bg-indigo-600 px-5 py-2 font-semibold text-white hover:bg-indigo-700"
+                                        className="mt-4 inline-block rounded-lg bg-indigo-600 px-5 py-2 font-semibold text-white transition hover:bg-indigo-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
                                     >
                                         View Details
                                     </Link>

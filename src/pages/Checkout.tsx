@@ -185,21 +185,21 @@ export default function Checkout() {
     if (placedOrder) {
         return (
             <main className="mx-auto max-w-2xl px-6 py-12 text-center">
-                <h1 className="mb-4 text-3xl font-bold text-green-700">
+                <h1 className="mb-4 text-3xl font-bold text-green-700 dark:text-green-400">
                     Thank you! Your order has been placed.
                 </h1>
 
-                <p className="mb-4 text-slate-600">
+                <p className="mb-4 text-slate-600 dark:text-slate-300">
                     Your order was placed successfully.
                 </p>
 
-                <p className="mb-4 text-lg font-semibold text-slate-900">
+                <p className="mb-4 text-lg font-semibold text-slate-900 dark:text-slate-100">
                     Order Number: #
                     {placedOrder.number ??
                         placedOrder.id.slice(0, 8)}
                 </p>
 
-                <p className="mb-6 text-2xl font-bold text-slate-900">
+                <p className="mb-6 text-2xl font-bold text-slate-900 dark:text-white">
                     Order Total: {formatPrice(placedOrder.totalPrice)}
                 </p>
 
@@ -213,7 +213,7 @@ export default function Checkout() {
 
                     <Link
                         to="/orders"
-                        className="inline-block rounded-lg border border-indigo-600 px-6 py-3 font-semibold text-indigo-600 hover:bg-indigo-50"
+                        className="inline-block rounded-lg border border-indigo-600 px-6 py-3 font-semibold text-indigo-600 hover:bg-indigo-50 dark:border-indigo-400 dark:text-indigo-400 dark:hover:bg-slate-800"
                     >
                         View My Orders
                     </Link>
@@ -228,11 +228,11 @@ export default function Checkout() {
 
     return (
         <main className="mx-auto max-w-3xl px-6 py-12">
-            <h1 className="mb-8 text-3xl font-bold text-slate-900">
+            <h1 className="mb-8 text-3xl font-bold text-slate-900 dark:text-white">
                 Checkout
             </h1>
 
-            <section className="mb-8 rounded-xl bg-white p-6 shadow-sm">
+            <section className="mb-8 rounded-xl border border-slate-200 bg-white p-6 text-slate-900 shadow-sm dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100">
                 <h2 className="mb-4 text-xl font-semibold">
                     Order Summary
                 </h2>
@@ -273,21 +273,21 @@ export default function Checkout() {
                     })}
                 </ul>
 
-                <div className="mt-5 border-t border-slate-200 pt-4">
-                    <p className="mb-4 text-slate-600">
+                <div className="mt-5 border-t border-slate-200 pt-4 dark:border-slate-700">
+                    <p className="mb-4 text-slate-600 dark:text-slate-300">
                         Total items: {totalItems}
                     </p>
 
                     <div className="space-y-3">
                         <div className="flex justify-between">
-                            <span className="text-slate-600">
+                            <span className="text-slate-600 dark:text-slate-300">
                                 Subtotal
                             </span>
                             <span>{formatPrice(subtotal)}</span>
                         </div>
 
                         {promoCode && (
-                            <div className="flex justify-between gap-4 text-green-700">
+                            <div className="flex justify-between gap-4 text-green-700 dark:text-green-400">
                                 <span>
                                     Discount (10% — {promoCode})
                                 </span>
@@ -298,7 +298,7 @@ export default function Checkout() {
                         )}
 
                         <div className="flex justify-between">
-                            <span className="text-slate-600">
+                            <span className="text-slate-600 dark:text-slate-300">
                                 Shipping
                             </span>
                             <span>
@@ -308,13 +308,13 @@ export default function Checkout() {
                             </span>
                         </div>
 
-                        <div className="flex justify-between border-t border-slate-200 pt-4 text-xl font-bold">
+                        <div className="flex justify-between border-t border-slate-200 pt-4 text-xl font-bold dark:border-slate-700">
                             <span>Total</span>
                             <span>{formatPrice(totalPrice)}</span>
                         </div>
                     </div>
 
-                    <p className="mt-3 text-sm text-slate-500">
+                    <p className="mt-3 text-sm text-slate-500 dark:text-slate-400">
                         Free shipping on orders of $100 or more
                         after discounts.
                     </p>
@@ -324,7 +324,7 @@ export default function Checkout() {
             <form
                 onSubmit={handleSubmit}
                 noValidate
-                className="space-y-5 rounded-xl bg-white p-6 shadow-sm"
+                className="space-y-5 rounded-xl border border-slate-200 bg-white p-6 text-slate-900 shadow-sm dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
             >
                 <h2 className="text-xl font-semibold">
                     Shipping Information
@@ -333,7 +333,7 @@ export default function Checkout() {
                 <div>
                     <label
                         htmlFor="fullName"
-                        className="mb-2 block font-medium"
+                        className="mb-2 block font-medium text-slate-700 dark:text-slate-200"
                     >
                         Full Name
                     </label>
@@ -353,13 +353,13 @@ export default function Checkout() {
                                 ? "fullName-error"
                                 : undefined
                         }
-                        className="w-full rounded-lg border border-slate-300 p-3"
+                        className="w-full rounded-lg border border-slate-300 bg-white p-3 text-slate-900 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
                     />
                     {fieldErrors.fullName && (
                         <p
                             id="fullName-error"
                             role="alert"
-                            className="mt-1 text-sm text-red-600"
+                            className="mt-1 text-sm text-red-600 dark:text-red-400"
                         >
                             {fieldErrors.fullName}
                         </p>
@@ -369,7 +369,7 @@ export default function Checkout() {
                 <div>
                     <label
                         htmlFor="email"
-                        className="mb-2 block font-medium"
+                        className="mb-2 block font-medium text-slate-700 dark:text-slate-200"
                     >
                         Email
                     </label>
@@ -388,13 +388,13 @@ export default function Checkout() {
                                 ? "email-error"
                                 : undefined
                         }
-                        className="w-full rounded-lg border border-slate-300 p-3"
+                        className="w-full rounded-lg border border-slate-300 bg-white p-3 text-slate-900 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
                     />
                     {fieldErrors.email && (
                         <p
                             id="email-error"
                             role="alert"
-                            className="mt-1 text-sm text-red-600"
+                            className="mt-1 text-sm text-red-600 dark:text-red-400"
                         >
                             {fieldErrors.email}
                         </p>
@@ -404,7 +404,7 @@ export default function Checkout() {
                 <div>
                     <label
                         htmlFor="address"
-                        className="mb-2 block font-medium"
+                        className="mb-2 block font-medium text-slate-700 dark:text-slate-200"
                     >
                         Address
                     </label>
@@ -424,13 +424,13 @@ export default function Checkout() {
                                 ? "address-error"
                                 : undefined
                         }
-                        className="w-full rounded-lg border border-slate-300 p-3"
+                        className="w-full rounded-lg border border-slate-300 bg-white p-3 text-slate-900 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
                     />
                     {fieldErrors.address && (
                         <p
                             id="address-error"
                             role="alert"
-                            className="mt-1 text-sm text-red-600"
+                            className="mt-1 text-sm text-red-600 dark:text-red-400"
                         >
                             {fieldErrors.address}
                         </p>
@@ -440,7 +440,7 @@ export default function Checkout() {
                 <div>
                     <label
                         htmlFor="city"
-                        className="mb-2 block font-medium"
+                        className="mb-2 block font-medium text-slate-700 dark:text-slate-200"
                     >
                         City
                     </label>
@@ -459,13 +459,13 @@ export default function Checkout() {
                                 ? "city-error"
                                 : undefined
                         }
-                        className="w-full rounded-lg border border-slate-300 p-3"
+                        className="w-full rounded-lg border border-slate-300 bg-white p-3 text-slate-900 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
                     />
                     {fieldErrors.city && (
                         <p
                             id="city-error"
                             role="alert"
-                            className="mt-1 text-sm text-red-600"
+                            className="mt-1 text-sm text-red-600 dark:text-red-400"
                         >
                             {fieldErrors.city}
                         </p>
@@ -475,7 +475,7 @@ export default function Checkout() {
                 <div>
                     <label
                         htmlFor="postalCode"
-                        className="mb-2 block font-medium"
+                        className="mb-2 block font-medium text-slate-700 dark:text-slate-200"
                     >
                         Postal Code
                     </label>
@@ -495,13 +495,13 @@ export default function Checkout() {
                                 ? "postalCode-error"
                                 : undefined
                         }
-                        className="w-full rounded-lg border border-slate-300 p-3"
+                        className="w-full rounded-lg border border-slate-300 bg-white p-3 text-slate-900 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
                     />
                     {fieldErrors.postalCode && (
                         <p
                             id="postalCode-error"
                             role="alert"
-                            className="mt-1 text-sm text-red-600"
+                            className="mt-1 text-sm text-red-600 dark:text-red-400"
                         >
                             {fieldErrors.postalCode}
                         </p>
@@ -511,7 +511,7 @@ export default function Checkout() {
                 {error && (
                     <p
                         role="alert"
-                        className="text-sm text-red-600"
+                        className="text-sm text-red-600 dark:text-red-400"
                     >
                         {error}
                     </p>
