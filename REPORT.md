@@ -1,4 +1,3 @@
-
 # 10X Shop — Project Report
 
 ## 1. Project Overview
@@ -19,9 +18,11 @@ The main objective was to demonstrate practical frontend development skills, inc
 
 **GitHub repository:** https://github.com/NaziPholadashvili/10x-shop
 
+**Demo video:** https://github.com/NaziPholadashvili/10x-shop/issues/59
+
 ## 2. Planned vs Implemented Features
 
-The original project plan focused on CORE functionality. During development, the scope was expanded to include FULL requirements.
+The original project plan focused on CORE functionality. During development, the scope was expanded to include FULL requirements and additional user experience improvements.
 
 | Planned CORE Feature | Status |
 |---|---|
@@ -34,15 +35,15 @@ The original project plan focused on CORE functionality. During development, the
 | Order confirmation | Implemented |
 | Custom 404 page | Implemented and improved after review |
 | Loading and error handling | Implemented |
-| Responsive design | Implemented; final cross-page review pending |
-| React Error Boundary | Implemented |
+| Responsive design | Implemented; key layouts manually reviewed |
+| React Error Boundary | Implemented and tested |
 | Production deployment | Completed |
-| Project documentation | Created; final improvements in progress |
-| Demo video | Pending |
+| Project documentation | Created and updated |
+| Demo video | Completed and linked in README.md |
 
 The main CORE application functionality has been implemented.
 
-Remaining work focuses on final verification, documentation improvements, the demonstration video, and oral defense preparation.
+The application was deployed, tested, and documented. Additional improvements were completed during the final review period.
 
 ## 3. FULL and Additional Features
 
@@ -59,6 +60,7 @@ Remaining work focuses on final verification, documentation improvements, the de
 - AbortController-based request cancellation
 - Reusable product cards
 - Discounted product prices
+- Stock-aware product availability behavior
 
 ### 3.2 Enhanced Product Details
 
@@ -86,6 +88,7 @@ Remaining work focuses on final verification, documentation improvements, the de
 - Promotional code persistence
 - Shipping cost calculation
 - Consistent cart and checkout totals
+- User-specific cart and promotional data storage
 
 ### 3.4 Authentication, Checkout, and Orders
 
@@ -102,6 +105,7 @@ Remaining work focuses on final verification, documentation improvements, the de
 - Dynamic order status display
 - Reorder functionality
 - Editable protected user profile
+- User-specific data handling
 
 ### 3.5 User Experience and Engineering
 
@@ -114,6 +118,8 @@ Remaining work focuses on final verification, documentation improvements, the de
 - Loading, empty, and error states
 - Organized routes and protected route logic
 - Reusable components and custom hooks
+- Dark Mode theme support
+- Local data clearing functionality
 - TypeScript type checking
 - ESLint and production build verification
 
@@ -174,16 +180,54 @@ The cart and checkout use consistent pricing rules.
 
 Browser localStorage stores:
 
-- Demo username
+- Demo authentication information
 - Shopping cart contents
 - Order history
 - Active promotional code
 - User-submitted product reviews
 - User profile information
+- Theme preference
 
-The promotional code uses the `10x-shop-promo` storage key.
+The application uses browser-based persistence rather than a backend database.
+
+The final implementation includes user-specific storage handling for cart and promotional data, along with user-related review information.
 
 Authentication and checkout are simulated. No real payment processing or backend order database is used.
+
+Because the application uses browser localStorage, the stored data should not be treated as secure server-side storage.
+
+### 4.6 Dark Mode
+
+Dark Mode was added as an additional user experience feature.
+
+The application supports switching between visual themes.
+
+Theme-related styling was reviewed and improved across the application.
+
+The selected theme is preserved using browser storage.
+
+### 4.7 User Data Isolation and Local Data Clearing
+
+During the final review, user-specific data handling was improved.
+
+The implementation includes:
+
+- User-specific cart storage
+- User-specific promotional code storage
+- User identification for newly submitted reviews
+- Local data clearing functionality in the profile
+- Order clearing support
+- Backup and restoration attempts during the local data clearing process
+
+These changes were intended to reduce unintended sharing of locally stored application data between demo users.
+
+The Clear Local Data functionality was manually tested using a secondary demo account.
+
+The test confirmed that profile data was cleared and remained cleared after a page refresh.
+
+The session and selected theme remained available during that test.
+
+The final implementation includes error-handling and restoration logic, but not every possible storage failure or multi-user scenario was independently tested.
 
 ## 5. Development Challenges and Solutions
 
@@ -237,10 +281,14 @@ Other technical improvements included:
 - Organizing protected routes and fallback navigation
 - Maintaining consistent prices across product details, cart, and checkout
 - Managing increasingly complex cart actions using a reducer
-- Persisting promotional discounts without changing the existing cart storage format
+- Persisting promotional discounts
 - Fixing direct navigation to nested routes on Vercel
 - Improving login and checkout validation after evaluation feedback
 - Improving invalid product ID and HTTP 404 handling
+- Synchronizing stock-aware product behavior with cart quantities
+- Improving user-specific localStorage handling
+- Adding and refining Dark Mode support
+- Improving local data clearing behavior
 
 ## 6. Testing and Quality Assurance
 
@@ -265,6 +313,8 @@ The project was verified using TypeScript checks, ESLint, production builds, man
 - Order creation and order details
 - Invalid product ID handling
 - Missing product HTTP 404 handling
+- Dark Mode functionality
+- Local data clearing using a secondary demo account
 
 ### 6.2 Login Validation Improvements
 
@@ -399,20 +449,30 @@ tsc -b && vite build
 | `dist/assets/index-B24A6GEc.js` | 318.73 kB | 95.31 kB |
 | **Total** | **341.41 kB** | **100.67 kB** |
 
-These values were reported by Vite during the production build.
+These values were reported by Vite during the November 5 production build.
 
-The JavaScript bundle is the largest generated asset in this build.
+The JavaScript bundle was the largest generated asset in that build.
 
 The gzip figures represent compressed asset sizes and should not be interpreted as a complete measurement of network transfer, API responses, images, or runtime memory usage.
 
 Bundle sizes may change when application code, dependencies, or build configuration are updated.
 
-### 6.8 Remaining Verification
+### 6.8 Final Verification Status
 
-- Final cross-page functional review
-- Final responsive review across key layouts
-- Final regression review before submission
-- Final demo recording
+The main application flows were manually tested during development and on the deployed Vercel application.
+
+The final review also included:
+
+- Additional validation improvements
+- Product ID and Not Found improvements
+- Dark Mode implementation and styling
+- User-specific data handling improvements
+- Local data clearing testing
+- TypeScript, ESLint, and production build verification
+- Confirmation that the deployed application remained accessible
+- Demo video recording and playback verification
+
+Some broader regression scenarios, including every responsive layout and every possible localStorage failure condition, were not exhaustively tested.
 
 ## 7. Git and GitHub Workflow
 
@@ -420,17 +480,19 @@ The project uses Git and GitHub for version control.
 
 Development work was organized through meaningful Conventional Commits, feature branches, GitHub Issues, and Pull Requests.
 
-Some early features were committed directly to `main`. Later development increasingly used feature branches and Pull Requests.
+Some early features and documentation changes were committed directly to `main`. Later development increasingly used feature branches and Pull Requests.
 
 ### 7.1 Git Statistics
 
-As of November 5, 2026:
+**Final documentation snapshot — November 6, 2026 (including the planned final report commit):**
 
 | Metric | Result |
 |---|---:|
-| Git commits | 75 |
-| Distinct commit dates | 17 |
-| Merged Pull Requests | 21 |
+| Git commits in `main` history, including merge commits | 101 |
+| Distinct commit dates | 18 |
+| Merged Pull Requests | 30 |
+| GitHub Issues | 29 |
+| GitHub branches | 31 |
 
 The project has exceeded the quantitative FULL-level development targets:
 
@@ -438,11 +500,17 @@ The project has exceeded the quantitative FULL-level development targets:
 - At least 15 distinct commit dates
 - At least 8 merged Pull Requests
 
-The 17 distinct commit dates were verified using Git history on the `main` branch, covering October 20 through November 5, 2026.
+The 101 commits represent the expected total Git history reachable from the `main` branch after committing this final report update, including merge commits.
 
-The commit count and merged Pull Request count were checked against the GitHub repository.
+The 18 distinct commit dates were calculated from Git history.
 
-These statistics represent the November 5 snapshot and may increase if additional changes are merged.
+The 30 merged Pull Requests were checked using GitHub's merged PR filter.
+
+The Issue and branch counts reflect the repository totals observed during the final review.
+
+These metrics describe different aspects of the repository and are not expected to match each other.
+
+The statistics reflect the November 6 final documentation snapshot, subject to confirmation after the report commit is pushed.
 
 ### 7.2 GitHub Workflow Examples
 
@@ -469,10 +537,15 @@ Merged Pull Requests include:
 - PR #37 — Project planning and reporting improvements
 - PR #39 — README Data Flow and Credits
 - PR #41 — PLAN WBS estimates and Definition of Done
+- PR #58 — User data isolation and local data clearing improvements
 
-The review-related changes were developed using separate branches and GitHub Issues.
+Additional merged Pull Requests were completed during the final review period.
 
-Repository: https://github.com/NaziPholadashvili/10x-shop
+The project also uses GitHub Issues to document implementation tasks, fixes, and documentation work.
+
+Issue #59 was created to host the Demo Video and make it accessible through the README.
+
+**Repository:** https://github.com/NaziPholadashvili/10x-shop
 
 ## 8. Development Progress
 
@@ -515,7 +588,12 @@ Development progress is documented in three weekly reports.
 - Final documentation review
 - Lighthouse performance audit
 - Production bundle measurement
-- Demo video and oral defense preparation
+- Dark Mode theme support
+- User data isolation improvements
+- Local data clearing improvements
+- Demo video recording
+- Demo video link added to README
+- Oral defense preparation
 
 Detailed development notes are available in:
 
@@ -562,6 +640,8 @@ The deployed application was checked for:
 - Checkout validation messages
 - Custom Not Found pages for invalid and missing product IDs
 
+The live website was also opened successfully after the final user data isolation changes were merged.
+
 These checks confirmed that the main application flows worked on the deployed version during testing.
 
 ## 10. AI Assistance and Development Process
@@ -607,29 +687,34 @@ AI assistance did not replace manual testing or verification of application beha
 | CORE functionality | Implemented |
 | FULL functionality | Main planned features implemented |
 | PLAN.md | Updated with WBS, Risks, and DoD |
-| README.md | Updated with Data Flow and Credits |
-| DEBUG-LOG.md | Created; structured review pending |
-| REPORT.md | Updated with Lighthouse and bundle metrics |
+| README.md | Updated with Data Flow, Credits, and Demo Video |
+| DEBUG-LOG.md | Created with documented debugging cases |
+| REPORT.md | Updated with final project information |
 | Weekly progress reports | Created |
 | Live deployed application | Completed |
 | Production verification | Main flows verified |
 | Lighthouse audit | Completed |
 | Production bundle measurement | Completed |
-| Final responsive review | Pending |
-| Demo video | Pending |
+| Dark Mode | Implemented |
+| User data isolation improvements | Implemented |
+| Local data clearing | Implemented and manually tested on a secondary account |
+| Final responsive review | Key layouts tested; exhaustive review not completed |
+| Demo video | Completed |
+| Demo video link in README | Completed |
 | Oral defense preparation | In progress |
 
 ## 12. Remaining Work
 
-Before final submission:
+The main implementation, deployment, documentation, and demo recording tasks have been completed.
 
-1. Complete the remaining documentation review and updates.
-2. Finalize the structured debugging log.
-3. Perform final functional and responsive regression checks.
-4. Verify that the latest documentation and application changes are merged.
-5. Record the demo video demonstrating the main user flows.
-6. Prepare for the oral defense.
-7. Confirm the final submission requirements.
+Remaining activities are:
+
+1. Confirm that the final REPORT.md update is committed and pushed.
+2. Confirm that the submission links are accessible.
+3. Prepare for the oral defense.
+4. Complete any additional submission steps required by the lecturer.
+
+No additional feature development is planned before submission.
 
 ## 13. Lessons Learned
 
@@ -646,26 +731,33 @@ Developing 10X Shop provided practical experience with:
 - Validating forms and managing checkout state
 - Using reducer-based state management
 - Implementing pricing, promotional discounts, and shipping calculations
+- Managing user-specific data in a browser-based application
+- Implementing Dark Mode
 - Using Git branches, Issues, Pull Requests, and meaningful commits
 - Deploying and testing a client-side application on Vercel
 - Reviewing evaluation feedback and correcting specific problems
 - Measuring frontend performance using Lighthouse
 - Reviewing production bundle sizes
+- Preparing a demonstration video
 
 The project demonstrated the importance of testing changes before committing them, documenting actual technical problems, and understanding implementation decisions rather than relying only on generated code.
 
 ## 14. Conclusion
 
-10X Shop progressed from an initial CORE-focused project plan to a deployed frontend e-commerce demonstration with product discovery, authentication, shopping cart, checkout, order management, product reviews, and promotional discounts.
+10X Shop progressed from an initial CORE-focused project plan to a deployed frontend e-commerce demonstration with product discovery, authentication, shopping cart, checkout, order management, product reviews, promotional discounts, and Dark Mode.
 
 The main CORE application features and planned additional functionality have been implemented.
 
 The application is deployed on Vercel, and its main user flows have been manually verified.
 
+Additional final improvements addressed validation, product availability, user-specific data handling, and local data clearing.
+
 The November 5 Lighthouse audit recorded Performance 94, Accessibility 95, Best Practices 100, and SEO 83.
 
-The production build completed successfully, generating approximately 341.41 kB of HTML, CSS, and JavaScript assets before compression and 100.67 kB according to the reported gzip sizes.
+The November 5 production build completed successfully, generating approximately 341.41 kB of HTML, CSS, and JavaScript assets before compression and 100.67 kB according to the reported gzip sizes.
 
-As of November 5, 2026, the project has 75 commits, 17 distinct commit dates, and 21 merged Pull Requests, exceeding the quantitative FULL-level development targets.
+Following the final report commit, the project is expected to have **101 commits in the `main` history, 18 distinct commit dates, and 30 merged Pull Requests**, exceeding the quantitative FULL-level development targets.
 
-The final stage focuses on documentation quality, regression testing, demo video preparation, and oral defense readiness.
+The Demo Video has been recorded and linked in the project README.
+
+The remaining priority is oral defense preparation and confirmation of the final submission requirements.
